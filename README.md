@@ -68,6 +68,8 @@ npm run dev
 - Income and expense summaries
 - Category-wise breakdowns
 - Budget warnings
+- Expense distribution charts
+- Monthly trend analysis
 
 ### Theme Support
 - Dark/Light mode toggle

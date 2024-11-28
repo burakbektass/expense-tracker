@@ -18,7 +18,6 @@ export default function Navigation() {
             {[
               { href: '/dashboard', label: 'Dashboard', icon: '📊' },
               { href: '/transactions', label: 'Transactions', icon: '💳' },
-              { href: '/reports', label: 'Reports', icon: '📈' },
               { href: '/categories', label: 'Categories', icon: '🏷️' },
             ].map((item) => (
               <Link

@@ -37,51 +37,19 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Category Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categoryTotals.map(category => (
-            <div key={category.id} className="p-4 rounded-xl border border-border bg-background/50">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  {category.icon}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{category.name}</h3>
-                    {category.budgetWarning && (
-                      <div className="relative group">
-                        <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
-                        <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap">
-                          {`Warning: Expenses have reached ${((Math.abs(category.totalExpense - category.totalIncome) / (category.budget || 1)) * 100).toFixed(0)}% of budget`}
-                          <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black/80"></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {category.budget && (
-                    <p className="text-xs opacity-60">
-                      Budget: ${category.budget.toFixed(2)}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-green-500">Income:</span>
-                  <span className="font-medium">${category.totalIncome.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-red-500">Expenses:</span>
-                  <span className="font-medium">${category.totalExpense.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm font-medium pt-1 border-t border-border">
-                  <span>Balance:</span>
-                  <span>${(category.totalIncome - category.totalExpense).toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 rounded-2xl border border-border bg-background/50">
+          <h2 className="text-xl font-semibold mb-4">Expense Distribution</h2>
+          <div className="aspect-square bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-lg flex items-center justify-center">
+            [Chart Placeholder]
+          </div>
+        </div>
+        
+        <div className="p-6 rounded-2xl border border-border bg-background/50">
+          <h2 className="text-xl font-semibold mb-4">Monthly Trend</h2>
+          <div className="aspect-square bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center">
+            [Chart Placeholder]
+          </div>
         </div>
       </div>
     </div>

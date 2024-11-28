@@ -5,7 +5,7 @@ import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
 
 export default function Categories() {
-  const { categories, addCategory, deleteCategory, getCategoryTransactionCount } = useCategories();
+  const { categories, addCategory, deleteCategory, getCategoryTotals, getCategoryTransactionCount } = useCategories();
   const { transactions, deleteTransactionsByCategory } = useTransactions();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState<{show: boolean; categoryId: string}>({ show: false, categoryId: '' });
@@ -14,6 +14,8 @@ export default function Categories() {
     icon: '📦',
     budget: null as number | null 
   });
+
+  const categoryTotals = getCategoryTotals(transactions);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,16 +54,27 @@ export default function Categories() {
         </button>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {categories.map((category) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {categoryTotals.map((category) => (
           <div key={category.id} className="p-6 rounded-2xl border border-border bg-background/50">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
                   {category.icon}
                 </div>
                 <div>
-                  <h3 className="font-medium">{category.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium">{category.name}</h3>
+                    {category.budgetWarning && (
+                      <div className="relative group">
+                        <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
+                        <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap">
+                          {`Warning: Expenses have reached ${((Math.abs(category.totalExpense - category.totalIncome) / (category.budget || 1)) * 100).toFixed(0)}% of budget`}
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black/80"></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-sm opacity-60">
                     {category.budget ? `Budget: $${category.budget.toFixed(2)}` : 'No budget set'}
                   </p>
@@ -73,6 +86,20 @@ export default function Categories() {
               >
                 🗑️
               </button>
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-green-500">Income:</span>
+                <span className="font-medium">${category.totalIncome.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-red-500">Expenses:</span>
+                <span className="font-medium">${category.totalExpense.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm font-medium pt-1 border-t border-border">
+                <span>Balance:</span>
+                <span>${(category.totalIncome - category.totalExpense).toFixed(2)}</span>
+              </div>
             </div>
           </div>
         ))}
