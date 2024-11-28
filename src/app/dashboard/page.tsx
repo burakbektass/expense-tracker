@@ -50,7 +50,13 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium">{category.name}</h3>
                     {category.budgetWarning && (
-                      <span className="text-yellow-500 animate-pulse" title="Approaching budget limit">⚠️</span>
+                      <div className="relative group">
+                        <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
+                        <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap">
+                          {`Warning: Expenses have reached ${((Math.abs(category.totalExpense - category.totalIncome) / (category.budget || 1)) * 100).toFixed(0)}% of budget`}
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black/80"></div>
+                        </div>
+                      </div>
                     )}
                   </div>
                   {category.budget && (

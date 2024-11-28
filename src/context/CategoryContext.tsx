@@ -76,7 +76,13 @@ export function CategoryProvider({ children }) {
         .reduce((sum, t) => sum + t.amount, 0);
       
       const balance = totalIncome - totalExpense;
-      const budgetWarning = category.budget ? (Math.abs(balance) >= category.budget * 0.8) : false;
+      
+      let budgetWarning = false;
+      if (category.budget) {
+        if (balance < 0) {
+          budgetWarning = Math.abs(balance) >= (category.budget * 0.8);
+        }
+      }
       
       return {
         ...category,
