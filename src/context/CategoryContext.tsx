@@ -6,7 +6,7 @@ type Category = {
   id: string;
   name: string;
   icon: string;
-  budget?: number;
+  budget: number | null;
 };
 
 type CategoryWithTotals = Category & {
@@ -17,7 +17,7 @@ type CategoryWithTotals = Category & {
 
 type CategoryContextType = {
     categories: Category[];
-    addCategory: (name: string, icon: string) => void;
+    addCategory: (name: string, icon: string, budget: number | null) => void;
     deleteCategory: (id: string, deleteTransactions?: boolean, onDeleteTransactions?: (categoryId: string) => void) => void;
     updateCategoryBudget: (categoryId: string, budget: number) => void;
     isLoading: boolean;
@@ -26,14 +26,14 @@ type CategoryContextType = {
   };
 
 const defaultCategories: Category[] = [
-    { id: '1', name: 'Shopping', icon: '🛍️' },
-    { id: '2', name: 'Food', icon: '🍽️' },
-    { id: '3', name: 'Transport', icon: '🚗' },
-    { id: '4', name: 'Entertainment', icon: '🎮' },
-    { id: '5', name: 'Bills', icon: '📃' },
-    { id: '6', name: 'Healthcare', icon: '🏥' },
-    { id: '7', name: 'Education', icon: '📚' },
-    { id: '8', name: 'Other', icon: '📦' },
+    { id: '1', name: 'Shopping', icon: '🛍️', budget: 400 },
+    { id: '2', name: 'Food', icon: '🍽️', budget: 700 },
+    { id: '3', name: 'Transport', icon: '🚗', budget: 350 },
+    { id: '4', name: 'Entertainment', icon: '🎮', budget: 100 },
+    { id: '5', name: 'Bills', icon: '📃', budget: 800 },
+    { id: '6', name: 'Healthcare', icon: '🏥', budget: null },
+    { id: '7', name: 'Education', icon: '📚', budget: 75 },
+    { id: '8', name: 'Other', icon: '📦', budget: null },
   ];
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
@@ -56,8 +56,13 @@ export function CategoryProvider({ children }) {
     }
   }, [categories, isLoading]);
 
-  const addCategory = (name: string, icon: string) => {
-    setCategories([...categories, { id: Date.now().toString(), name, icon }]);
+  const addCategory = (name: string, icon: string, budget: number | null) => {
+    setCategories([...categories, { 
+      id: Date.now().toString(), 
+      name, 
+      icon, 
+      budget 
+    }]);
   };
 
   const getCategoryTotals = (transactions: any[]) => {
