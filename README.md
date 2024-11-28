@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Modern Expense Tracker
+
+A modern, responsive expense tracking application built with Next.js 14, React, TypeScript, and TailwindCSS. This application helps users manage their expenses and income with features like categorization, budgeting, and dark/light theme support.
+
+## Features
+
+- 💰 Track income and expenses
+- 📊 Categorize transactions
+- 📱 Responsive design
+- 🌓 Dark/Light theme support
+- 💵 Budget management
+- 📈 Category-wise analytics
+- 💾 Local storage persistence
+- 🚀 Built with modern technologies
+
+## Tech Stack
+
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **State Management**: React Context
+- **Font**: Geist Font Family
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/burakbektass/expense-tracker.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app`: Contains the main application code.
+- `src/components`: Reusable UI components.
+- `src/lib`: Utility functions and API services.
+- `src/types`: TypeScript types.
+- `src/hooks`: Custom React hooks.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Key Features Explained
 
-## Deploy on Vercel
+### Transaction Management
+- Add and delete transactions
+- Categorize transactions
+- Track income and expenses separately
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Category System
+- Pre-defined default categories
+- Custom category creation
+- Budget setting for categories
+- Category-wise transaction analysis
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Dashboard
+- Overview of total balance
+- Income and expense summaries
+- Category-wise breakdowns
+- Budget warnings
+
+### Theme Support
+- Dark/Light mode toggle
+- Persistent theme preference
+- Smooth theme transitions
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
