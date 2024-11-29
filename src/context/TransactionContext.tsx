@@ -29,7 +29,7 @@ export function TransactionProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Client tarafında localStorage'dan veriyi yükle
+    // Load data from localStorage on client side
     const saved = localStorage.getItem('transactions');
     if (saved) {
       setTransactions(JSON.parse(saved));
@@ -38,7 +38,7 @@ export function TransactionProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Sadece client tarafında ve initial load tamamlandığında localStorage'a kaydet
+    // Save to localStorage only on client side and after initial load is complete
     if (!isLoading) {
       localStorage.setItem('transactions', JSON.stringify(transactions));
     }

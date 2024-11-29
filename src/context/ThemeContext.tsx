@@ -13,7 +13,7 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
-    // Sayfa yüklendiğinde localStorage'dan tema tercihini al
+    // Get theme preference from localStorage when page loads
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     if (savedTheme) {
       setTheme(savedTheme);
@@ -21,7 +21,7 @@ export function ThemeProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Tema değiştiğinde localStorage'a kaydet ve HTML attribute'unu güncelle
+    // Save to localStorage and update HTML attribute when theme changes
     localStorage.setItem('theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
