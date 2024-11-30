@@ -15,6 +15,8 @@ type CategoryWithTotals = Category & {
   budgetWarning?: boolean;
 };
 
+const MAX_CATEGORIES = 20;
+
 type CategoryContextType = {
     categories: Category[];
     addCategory: (name: string, icon: string, budget: number | null) => void;
@@ -23,6 +25,7 @@ type CategoryContextType = {
     isLoading: boolean;
     getCategoryTotals: (transactions: any[]) => CategoryWithTotals[];
     getCategoryTransactionCount: (transactions: any[], categoryId: string) => number;
+    hasReachedLimit: boolean;
   };
 
 const defaultCategories: Category[] = [
@@ -56,7 +59,12 @@ export function CategoryProvider({ children }) {
     }
   }, [categories, isLoading]);
 
+  const hasReachedLimit = categories.length >= MAX_CATEGORIES;
+
   const addCategory = (name: string, icon: string, budget: number | null) => {
+    if (hasReachedLimit) {
+      return;
+    }
     setCategories([...categories, { 
       id: Date.now().toString(), 
       name, 
@@ -118,7 +126,8 @@ export function CategoryProvider({ children }) {
       updateCategoryBudget,
       isLoading,
       getCategoryTotals,
-      getCategoryTransactionCount
+      getCategoryTransactionCount,
+      hasReachedLimit
     }}>
       {children}
     </CategoryContext.Provider>

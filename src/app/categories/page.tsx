@@ -5,7 +5,14 @@ import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
 
 export default function Categories() {
-  const { categories, addCategory, deleteCategory, getCategoryTotals, getCategoryTransactionCount } = useCategories();
+  const { 
+    categories, 
+    addCategory, 
+    deleteCategory, 
+    getCategoryTotals, 
+    getCategoryTransactionCount,
+    hasReachedLimit 
+  } = useCategories();
   const { transactions, deleteTransactionsByCategory } = useTransactions();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState<{show: boolean; categoryId: string}>({ show: false, categoryId: '' });
@@ -46,12 +53,24 @@ export default function Categories() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-bold">Categories</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          Add Category
-        </button>
+        <div className="flex flex-col items-end gap-2">
+          {hasReachedLimit && (
+            <p className="text-sm text-yellow-500">
+              Maximum category limit (20) reached
+            </p>
+          )}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className={`px-4 py-2 bg-blue-500 text-white rounded-lg transition-colors ${
+              hasReachedLimit 
+                ? 'opacity-50 cursor-not-allowed bg-blue-400' 
+                : 'hover:bg-blue-600'
+            }`}
+            disabled={hasReachedLimit}
+          >
+            Add Category
+          </button>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
