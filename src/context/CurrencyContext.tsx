@@ -17,6 +17,7 @@ type CurrencyContextType = {
   setCurrency: (currency: CurrencyOption) => void;
   currencies: CurrencyOption[];
   convertAmount: (amount: number, fromCurrency?: string) => number;
+  isLoading: boolean;
 };
 
 const currencies: CurrencyOption[] = [
@@ -35,8 +36,28 @@ const currencies: CurrencyOption[] = [
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<CurrencyOption>(currencies[0]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currency, setCurrency] = useState<CurrencyOption>(() => {
+    if (typeof window !== 'undefined') {
+      const savedCurrency = localStorage.getItem('selectedCurrency');
+      if (savedCurrency) {
+        return JSON.parse(savedCurrency);
+      }
+    }
+    return currencies[0];
+  });
   const [rates, setRates] = useState<ExchangeRates>({});
+
+  useEffect(() => {
+    // Set loading to false after initial currency is loaded
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem('selectedCurrency', JSON.stringify(currency));
+    }
+  }, [currency, isLoading]);
 
   // Fetch exchange rates
   useEffect(() => {
@@ -58,19 +79,6 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Load saved currency preference
-  useEffect(() => {
-    const saved = localStorage.getItem('currency');
-    if (saved) {
-      setCurrency(JSON.parse(saved));
-    }
-  }, []);
-
-  // Save currency preference
-  useEffect(() => {
-    localStorage.setItem('currency', JSON.stringify(currency));
-  }, [currency]);
-
   // Convert amount from USD to selected currency
   const convertAmount = (amount: number, fromCurrency: string = 'USD'): number => {
     if (!rates[currency.code] || !rates[fromCurrency]) return amount;
@@ -85,8 +93,20 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, currencies, convertAmount }}>
-      {children}
+    <CurrencyContext.Provider value={{ 
+      currency, 
+      setCurrency, 
+      currencies, 
+      convertAmount,
+      isLoading 
+    }}>
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          Loading...
+        </div>
+      ) : (
+        children
+      )}
     </CurrencyContext.Provider>
   );
 }
