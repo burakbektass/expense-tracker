@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { formatMoney } from '@/lib/formatUtils';
 
 export default function Categories() {
   const { 
@@ -102,17 +103,17 @@ export default function Categories() {
                   <div className="space-y-1">
                     <p className="text-sm opacity-60">
                       {category.budget 
-                        ? `Budget: ${currency.symbol}${convertAmount(category.budget).toFixed(2)}` 
+                        ? `Budget: ${currency.symbol}${formatMoney(convertAmount(category.budget))}` 
                         : 'No budget set'}
                     </p>
                     <p className="text-sm text-green-500">
-                      Income: {currency.symbol}{convertAmount(category.totalIncome).toFixed(2)}
+                      Income: {currency.symbol}{formatMoney(convertAmount(category.totalIncome))}
                     </p>
                     <p className="text-sm text-red-500">
-                      Expenses: {currency.symbol}{convertAmount(category.totalExpense).toFixed(2)}
+                      Expenses: {currency.symbol}{formatMoney(convertAmount(category.totalExpense))}
                     </p>
                     <p className="text-sm font-medium">
-                      Balance: {currency.symbol}{convertAmount(category.totalIncome - category.totalExpense).toFixed(2)}
+                      Balance: {currency.symbol}{formatMoney(convertAmount(category.totalIncome - category.totalExpense))}
                     </p>
                   </div>
                 </div>

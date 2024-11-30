@@ -6,6 +6,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
+import { formatMoney } from '@/lib/formatUtils';
 
 export default function Dashboard() {
   const { getCategoryTotals } = useCategories();
@@ -61,7 +62,7 @@ export default function Dashboard() {
 
   // Custom tooltip formatter for the bar chart
   const barTooltipFormatter = (value: number) => {
-    return `${currency.symbol}${value.toFixed(2)}`;
+    return `${currency.symbol}${formatMoney(value)}`;
   };
 
   return (
@@ -71,17 +72,17 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Balance</h3>
-          <p className="text-3xl font-bold">{currency.symbol}{convertAmount(balance).toFixed(2)}</p>
+          <p className="text-3xl font-bold">{currency.symbol}{formatMoney(convertAmount(balance))}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Income</h3>
-          <p className="text-3xl font-bold text-green-500">{currency.symbol}{convertAmount(totalIncome).toFixed(2)}</p>
+          <p className="text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(convertAmount(totalIncome))}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Expenses</h3>
-          <p className="text-3xl font-bold text-red-500">{currency.symbol}{convertAmount(totalExpense).toFixed(2)}</p>
+          <p className="text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(convertAmount(totalExpense))}</p>
         </div>
       </div>
 
@@ -154,7 +155,7 @@ export default function Dashboard() {
                     padding: '8px 12px'
                   }}
                   formatter={(value: number, name: string) => [
-                    `${currency.symbol}${value.toFixed(2)}`,
+                    `${currency.symbol}${formatMoney(value)}`,
                     name
                   ]}
                 />
@@ -170,7 +171,7 @@ export default function Dashboard() {
               <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <XAxis dataKey="month" />
                 <YAxis 
-                  tickFormatter={(value) => `${currency.symbol}${value}`}
+                  tickFormatter={(value) => `${currency.symbol}${formatMoney(value)}`}
                 />
                 <Tooltip 
                   formatter={barTooltipFormatter}

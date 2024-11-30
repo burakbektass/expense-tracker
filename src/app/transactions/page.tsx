@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { formatMoney } from '@/lib/formatUtils';
 
 export default function Transactions() {
   const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
@@ -71,7 +72,7 @@ export default function Transactions() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className={transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}>
-                    {currency.symbol}{convertAmount(Math.abs(transaction.amount)).toFixed(2)}
+                    {currency.symbol}{formatMoney(convertAmount(Math.abs(transaction.amount)))}
                   </span>
                   <button
                     onClick={() => deleteTransaction(transaction.id)}
