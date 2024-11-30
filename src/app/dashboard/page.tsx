@@ -3,6 +3,7 @@
 import { useCategories } from '@/context/CategoryContext';
 import { useTransactions } from '@/context/TransactionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
 
@@ -10,6 +11,7 @@ export default function Dashboard() {
   const { getCategoryTotals } = useCategories();
   const { transactions, isLoading } = useTransactions();
   const { theme } = useTheme();
+  const { currency, convertAmount } = useCurrency();
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">Loading...</div>;
@@ -25,7 +27,7 @@ export default function Dashboard() {
     .filter(cat => cat.totalExpense > 0)
     .map(cat => ({
       name: cat.name,
-      value: cat.totalExpense
+      value: convertAmount(cat.totalExpense)
     }));
 
   // Generate colors dynamically based on the number of categories with expenses
@@ -41,10 +43,11 @@ export default function Dashboard() {
       acc[monthYear] = { income: 0, expense: 0 };
     }
     
+    const convertedAmount = convertAmount(transaction.amount);
     if (transaction.type === 'income') {
-      acc[monthYear].income += transaction.amount;
+      acc[monthYear].income += convertedAmount;
     } else {
-      acc[monthYear].expense += transaction.amount;
+      acc[monthYear].expense += convertedAmount;
     }
     
     return acc;
@@ -56,6 +59,11 @@ export default function Dashboard() {
     Expenses: data.expense
   }));
 
+  // Custom tooltip formatter for the bar chart
+  const barTooltipFormatter = (value: number) => {
+    return `${currency.symbol}${value.toFixed(2)}`;
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-bold">Dashboard</h1>
@@ -63,17 +71,17 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Balance</h3>
-          <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
+          <p className="text-3xl font-bold">{currency.symbol}{convertAmount(balance).toFixed(2)}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Income</h3>
-          <p className="text-3xl font-bold text-green-500">${totalIncome.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-green-500">{currency.symbol}{convertAmount(totalIncome).toFixed(2)}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">Total Expenses</h3>
-          <p className="text-3xl font-bold text-red-500">${totalExpense.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-red-500">{currency.symbol}{convertAmount(totalExpense).toFixed(2)}</p>
         </div>
       </div>
 
@@ -146,7 +154,7 @@ export default function Dashboard() {
                     padding: '8px 12px'
                   }}
                   formatter={(value: number, name: string) => [
-                    `$${value.toFixed(2)}`,
+                    `${currency.symbol}${value.toFixed(2)}`,
                     name
                   ]}
                 />
@@ -159,32 +167,14 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold mb-4">Monthly Trend</h2>
           <div className="aspect-square">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barChartData}>
-                <XAxis 
-                  dataKey="month" 
-                  stroke={theme === 'dark' ? '#94a3b8' : '#64748b'}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                  interval={0}
-                  tick={{
-                    fontSize: 12,
-                    transform: 'translate(0, 8)'
-                  }}
-                />
+              <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <XAxis dataKey="month" />
                 <YAxis 
-                  stroke={theme === 'dark' ? '#94a3b8' : '#64748b'}
+                  tickFormatter={(value) => `${currency.symbol}${value}`}
                 />
                 <Tooltip 
-                  contentStyle={{
-                    backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
-                    borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
-                    borderRadius: '0.5rem'
-                  }}
-                  labelStyle={{
-                    color: theme === 'dark' ? '#e2e8f0' : '#334155'
-                  }}
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                  formatter={barTooltipFormatter}
+                  labelStyle={{ color: 'var(--foreground)' }}
                 />
                 <Bar dataKey="Income" fill={barColors.income} />
                 <Bar dataKey="Expenses" fill={barColors.expense} />

@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export default function Transactions() {
   const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
   const { categories } = useCategories();
+  const { currency, convertAmount } = useCurrency();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTransaction, setNewTransaction] = useState({
     description: '',
@@ -55,7 +57,7 @@ export default function Transactions() {
           {transactions.map((transaction) => {
             const category = categories.find(c => c.id === transaction.categoryId);
             return (
-              <div key={transaction.id} className="flex items-center justify-between p-4 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors group">
+              <div key={transaction.id} className="flex items-center justify-between p-4 rounded-lg bg-foreground-5 hover:bg-foreground-10 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
                     {category?.icon}
@@ -69,7 +71,7 @@ export default function Transactions() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className={transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}>
-                    {transaction.type === 'income' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                    {currency.symbol}{convertAmount(Math.abs(transaction.amount)).toFixed(2)}
                   </span>
                   <button
                     onClick={() => deleteTransaction(transaction.id)}

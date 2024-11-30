@@ -3,21 +3,27 @@
 @tailwind utilities;
 
 :root[data-theme="light"] {
-  --background: #efefef;  
-  --foreground: #334155;  
-  --card-bg: rgba(255, 255, 255, 0.8);
+  --background: #efefef;
+  --background-50: rgba(239, 239, 239, 0.5);
+  --background-10: rgba(239, 239, 239, 0.1);
+  --foreground: #334155;
   --hover-bg: rgba(51, 65, 85, 0.05);
-  --border-color: #0f172a;
+  --hover-bg-dark: rgba(51, 65, 85, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(18, 24, 38, 0.1);
   --modal-bg: rgba(255, 255, 255, 0.95);
   --modal-overlay: rgba(0, 0, 0, 0.4);
 }
 
 :root[data-theme="dark"] {
-  --background: #0f172a; 
-  --foreground: #e2e8f0;  
-  --card-bg: rgba(30, 41, 59, 0.5);
+  --background: #0f172a;
+  --background-50: rgba(15, 23, 42, 0.5);
+  --background-10: rgba(15, 23, 42, 0.1);
+  --foreground: #e2e8f0;
   --hover-bg: rgba(226, 232, 240, 0.05);
-  --border-color: rgba(226, 232, 240, 0.1);
+  --hover-bg-dark: rgba(226, 232, 240, 0.1);
+  --card-bg: rgba(30, 41, 59, 0.5);
+  --border-color: rgba(210, 214, 218, 0.08);
   --modal-bg: rgba(15, 23, 42, 0.95);
   --modal-overlay: rgba(0, 0, 0, 0.6);
 }
@@ -56,7 +62,7 @@ body {
   }
 
   .card {
-    @apply p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-border bg-background/50 hover:bg-foreground/5 transition-colors duration-150;
+    @apply p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-border bg-background-50 hover:bg-foreground-5 transition-colors duration-150;
   }
 
   .modal-container {
@@ -80,7 +86,7 @@ body {
   }
 
   .button-secondary {
-    @apply px-3 py-2 sm:px-4 sm:py-2 border border-border rounded-lg hover:bg-foreground/5 transition-colors duration-150;
+    @apply px-3 py-2 sm:px-4 sm:py-2 border border-border rounded-lg hover:bg-foreground-5 transition-colors duration-150;
   }
 
   .input-field {
@@ -93,22 +99,29 @@ body {
   }
 
   .nav-sidebar {
-    @apply fixed md:left-0 md:top-0 md:h-screen md:w-64 bg-background/50 backdrop-blur-xl border-r border-border p-6;
+    @apply fixed left-0 top-0 h-screen w-64 bg-background-50 backdrop-blur-xl border-r border-border p-6;
   }
 
   .select-field {
-    @apply w-full p-2 pr-10 rounded-lg border border-border appearance-none bg-no-repeat;
-    background-color: var(--background);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-    background-position: right 0.75rem center;
-    background-size: 1.25em 1.25em;
+    @apply w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .nav-sidebar {
+      @apply fixed left-0 top-0 h-screen w-64 bg-background-50 backdrop-blur-xl border-r border-border p-6;
+    }
   }
 }
 
 /* Add responsive navigation styles */
 @media (max-width: 768px) {
   .nav-sidebar {
-    @apply fixed bottom-0 left-0 w-full h-16 bg-background/50 backdrop-blur-xl border-t border-border;
+    @apply fixed bottom-0 left-0 w-full h-16 bg-background-50 backdrop-blur-xl border-t border-border;
   }
 
   .nav-content {
@@ -122,4 +135,8 @@ body {
   .main-content {
     @apply mb-16 ml-0;
   }
+}
+
+[data-theme="dark"] .select-field {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23e2e8f0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
 }

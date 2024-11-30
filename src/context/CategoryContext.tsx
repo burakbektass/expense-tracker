@@ -96,7 +96,8 @@ export function CategoryProvider({ children }) {
         ...category,
         totalIncome,
         totalExpense,
-        budgetWarning
+        budgetWarning,
+        balance
       };
     });
   };
