@@ -7,12 +7,17 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
 import { formatMoney } from '@/lib/formatUtils';
+import { useState } from 'react';
+import { ExpenseTable } from './components/ExpenseTable';
+import { TrendTable } from './components/TrendTable';
 
 export default function Dashboard() {
   const { getCategoryTotals } = useCategories();
   const { transactions, isLoading } = useTransactions();
   const { theme } = useTheme();
   const { currency, convertAmount } = useCurrency();
+  const [showPieAsTable, setShowPieAsTable] = useState(false);
+  const [showBarAsTable, setShowBarAsTable] = useState(false);
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">Loading...</div>;
@@ -88,99 +93,131 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl border border-border bg-background/50">
-          <h2 className="text-xl font-semibold mb-4">Expense Distribution</h2>
-          <div className="aspect-square">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({
-                    cx,
-                    cy,
-                    midAngle,
-                    innerRadius,
-                    outerRadius,
-                    value,
-                    name,
-                    percent,
-                  }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Expense Distribution</h2>
+            <button
+              onClick={() => setShowPieAsTable(!showPieAsTable)}
+              className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
+            >
+              {showPieAsTable ? '📊 Show Chart' : '📋 Show Table'}
+            </button>
+          </div>
+          <div className="h-[400px]">
+            {showPieAsTable ? (
+              <ExpenseTable 
+                data={pieChartData} 
+                currency={currency} 
+                formatMoney={formatMoney} 
+              />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({
+                      cx,
+                      cy,
+                      midAngle,
+                      innerRadius,
+                      outerRadius,
+                      value,
+                      name,
+                      percent,
+                    }) => {
+                      const RADIAN = Math.PI / 180;
+                      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                      const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                    // Only show label if the segment is big enough (more than 5%)
-                    if (percent < 0.05) return null;
+                      // Only show label if the segment is big enough (more than 5%)
+                      if (percent < 0.05) return null;
 
-                    const percentage = (percent * 100).toFixed(0);
-                    if (isNaN(Number(percentage))) return null;
+                      const percentage = (percent * 100).toFixed(0);
+                      if (isNaN(Number(percentage))) return null;
 
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        fill="#ffffff"
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fontSize="smaller"
-                        style={{ 
-                          textShadow: '0px 0px 3px rgba(0,0,0,0.5)'
-                        }}
-                      >
-                        {`${name.length > 10 ? name.substring(0, 10) + '...' : name}
-                        ${percentage}%`}
-                      </text>
-                    );
-                  }}
-                  outerRadius="80%"
-                  dataKey="value"
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={pieColors[index]}
-                      style={{ outline: 'none' }}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-                    padding: '8px 12px'
-                  }}
-                  formatter={(value: number, name: string) => [
-                    `${currency.symbol}${formatMoney(value)}`,
-                    name
-                  ]}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                      return (
+                        <text
+                          x={x}
+                          y={y}
+                          fill="#ffffff"
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fontSize="smaller"
+                          style={{ 
+                            textShadow: '0px 0px 3px rgba(0,0,0,0.5)'
+                          }}
+                        >
+                          {`${name.length > 10 ? name.substring(0, 10) + '...' : name}
+                          ${percentage}%`}
+                        </text>
+                      );
+                    }}
+                    outerRadius="90%"
+                    dataKey="value"
+                  >
+                    {pieChartData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={pieColors[index]}
+                        style={{ outline: 'none' }}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                      padding: '8px 12px'
+                    }}
+                    formatter={(value: number, name: string) => [
+                      `${currency.symbol}${formatMoney(value)}`,
+                      name
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
         
         <div className="p-6 rounded-2xl border border-border bg-background/50">
-          <h2 className="text-xl font-semibold mb-4">Monthly Trend</h2>
-          <div className="aspect-square">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <XAxis dataKey="month" />
-                <YAxis 
-                  tickFormatter={(value) => `${currency.symbol}${formatMoney(value)}`}
-                />
-                <Tooltip 
-                  formatter={barTooltipFormatter}
-                  labelStyle={{ color: 'var(--foreground)' }}
-                />
-                <Bar dataKey="Income" fill={barColors.income} />
-                <Bar dataKey="Expenses" fill={barColors.expense} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Monthly Trend</h2>
+            <button
+              onClick={() => setShowBarAsTable(!showBarAsTable)}
+              className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
+            >
+              {showBarAsTable ? '📊 Show Chart' : '📋 Show Table'}
+            </button>
+          </div>
+          <div className="h-[400px]">
+            {showBarAsTable ? (
+              <TrendTable 
+                data={barChartData} 
+                currency={currency} 
+                formatMoney={formatMoney} 
+              />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <XAxis dataKey="month" />
+                  <YAxis 
+                    tickFormatter={(value) => `${currency.symbol}${formatMoney(value)}`}
+                  />
+                  <Tooltip 
+                    formatter={barTooltipFormatter}
+                    labelStyle={{ color: 'var(--foreground)' }}
+                  />
+                  <Bar dataKey="Income" fill={barColors.income} />
+                  <Bar dataKey="Expenses" fill={barColors.expense} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>
