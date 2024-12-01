@@ -30,7 +30,9 @@ export default function Transactions() {
         amount: Number(newTransaction.amount),
         type: newTransaction.type,
         categoryId: newTransaction.categoryId,
+        currency: currency.code
       });
+      
       setNewTransaction({
         description: '',
         amount: '',
@@ -72,7 +74,12 @@ export default function Transactions() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className={transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}>
-                    {currency.symbol}{formatMoney(convertAmount(Math.abs(transaction.amount)))}
+                    {currency.symbol}
+                    {formatMoney(
+                      transaction.currency === currency.code
+                        ? Math.abs(transaction.amount)
+                        : convertAmount(Math.abs(transaction.amount), transaction.currency || 'USD')
+                    )}
                   </span>
                   <button
                     onClick={() => deleteTransaction(transaction.id)}

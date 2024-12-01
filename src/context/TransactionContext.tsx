@@ -2,15 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type TransactionType = 'income' | 'expense';
-
 type Transaction = {
   id: string;
   description: string;
   amount: number;
-  type: TransactionType;
+  type: 'income' | 'expense';
   categoryId: string;
   date: string;
+  currency?: string; // Optional to maintain compatibility with existing data
 };
 
 type TransactionContextType = {
@@ -49,6 +48,7 @@ export function TransactionProvider({ children }) {
       ...transaction,
       id: Date.now().toString(),
       date: new Date().toISOString(),
+      currency: transaction.currency
     };
     setTransactions([newTransaction, ...transactions]);
   };
