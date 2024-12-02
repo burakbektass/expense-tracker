@@ -5,6 +5,7 @@ import { useTransactions } from '@/context/TransactionContext';
 import { useCategories } from '@/context/CategoryContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatMoney } from '@/lib/formatUtils';
+import { TransactionTable } from './components/TransactionTable';
 
 export default function Transactions() {
   const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
@@ -56,42 +57,13 @@ export default function Transactions() {
       </div>
 
       <div className="rounded-2xl border border-border overflow-hidden">
-        <div className="p-6 space-y-4">
-          {transactions.map((transaction) => {
-            const category = categories.find(c => c.id === transaction.categoryId);
-            return (
-              <div key={transaction.id} className="flex items-center justify-between p-4 rounded-lg bg-foreground-5 hover:bg-foreground-10 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    {category?.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{transaction.description}</h3>
-                    <p className="text-sm opacity-60">
-                      {new Date(transaction.date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className={transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}>
-                    {currency.symbol}
-                    {formatMoney(
-                      transaction.currency === currency.code
-                        ? Math.abs(transaction.amount)
-                        : convertAmount(Math.abs(transaction.amount), transaction.currency || 'USD')
-                    )}
-                  </span>
-                  <button
-                    onClick={() => deleteTransaction(transaction.id)}
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600 transition-opacity"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <TransactionTable
+          transactions={transactions}
+          categories={categories}
+          currency={currency}
+          convertAmount={convertAmount}
+          onDelete={deleteTransaction}
+        />
       </div>
 
       {showAddModal && (
