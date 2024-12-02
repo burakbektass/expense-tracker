@@ -4,7 +4,7 @@ import { useCategories } from '@/context/CategoryContext';
 import { useTransactions } from '@/context/TransactionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useCurrency } from '@/context/CurrencyContext';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
 import { formatMoney } from '@/lib/formatUtils';
 import { useState } from 'react';
@@ -123,8 +123,6 @@ export default function Dashboard() {
                       midAngle,
                       innerRadius,
                       outerRadius,
-                      value,
-                      name,
                       percent,
                     }) => {
                       const RADIAN = Math.PI / 180;
@@ -150,12 +148,11 @@ export default function Dashboard() {
                             textShadow: '0px 0px 3px rgba(0,0,0,0.5)'
                           }}
                         >
-                          {`${name.length > 10 ? name.substring(0, 10) + '...' : name}
-                          ${percentage}%`}
+                          {`${percentage}%`}
                         </text>
                       );
                     }}
-                    outerRadius="90%"
+                    outerRadius="80%"
                     dataKey="value"
                   >
                     {pieChartData.map((entry, index) => (
@@ -166,6 +163,16 @@ export default function Dashboard() {
                       />
                     ))}
                   </Pie>
+                  <Legend
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
+                    formatter={(value, entry: any) => (
+                      <span style={{ color: entry.color }}>
+                        {value}
+                      </span>
+                    )}
+                  />
                   <Tooltip 
                     contentStyle={{
                       backgroundColor: '#ffffff',
