@@ -77,6 +77,14 @@ export function TransactionTable({
     }
   });
 
+  if (transactions.length === 0) {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        No transactions found
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full">

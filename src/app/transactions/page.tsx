@@ -18,6 +18,11 @@ export default function Transactions() {
     type: 'expense' as const,
     categoryId: '',
   });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredTransactions = transactions.filter(transaction =>
+    transaction.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">Loading...</div>;
@@ -46,19 +51,33 @@ export default function Transactions() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-4">
         <h1 className="text-4xl font-bold">Transactions</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          Add Transaction
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 pr-10 rounded-lg border border-border bg-background"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
+          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Add Transaction
+          </button>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border overflow-hidden">
         <TransactionTable
-          transactions={transactions}
+          transactions={filteredTransactions}
           categories={categories}
           currency={currency}
           convertAmount={convertAmount}
