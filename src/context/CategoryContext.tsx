@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'; 
+import { Transaction } from '@/types/transaction';
 
 type Category = {
   id: string;
@@ -20,12 +21,12 @@ const MAX_CATEGORIES = 20;
 type CategoryContextType = {
     categories: Category[];
     addCategory: (name: string, icon: string, budget: number | null) => void;
-    deleteCategory: (id: string, deleteTransactions?: boolean, onDeleteTransactions?: (categoryId: string) => void) => void;
-    updateCategoryBudget: (categoryId: string, budget: number) => void;
-    isLoading: boolean;
-    getCategoryTotals: (transactions: any[]) => CategoryWithTotals[];
-    getCategoryTransactionCount: (transactions: any[], categoryId: string) => number;
+    deleteCategory: (id: string, force?: boolean, onDelete?: (id: string) => void) => void;
+    updateCategory: (id: string, updates: Partial<Category>) => void;
+    getCategoryTotals: (transactions: Transaction[]) => CategoryWithTotals[];
+    getCategoryTransactionCount: (transactions: Transaction[], categoryId: string) => number;
     hasReachedLimit: boolean;
+    isLoading: boolean;
   };
 
 const defaultCategories: Category[] = [
@@ -113,9 +114,9 @@ export function CategoryProvider({ children }) {
     setCategories(categories.filter(category => category.id !== id));
   };
 
-  const updateCategoryBudget = (categoryId: string, budget: number) => {
-    setCategories(categories.map(category => 
-      category.id === categoryId ? { ...category, budget } : category
+  const updateCategory = (id: string, updates: Partial<Category>) => {
+    setCategories(prev => prev.map(category => 
+      category.id === id ? { ...category, ...updates } : category
     ));
   };
 
@@ -124,7 +125,7 @@ export function CategoryProvider({ children }) {
       categories, 
       addCategory, 
       deleteCategory,
-      updateCategoryBudget,
+      updateCategory,
       isLoading,
       getCategoryTotals,
       getCategoryTransactionCount,

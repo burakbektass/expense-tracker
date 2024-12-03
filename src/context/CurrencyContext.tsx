@@ -80,21 +80,20 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Convert amount from USD to selected currency
-  const convertAmount = (amount: number, fromCurrency: string = 'USD'): number => {
-    if (!rates[currency.code] || !rates[fromCurrency]) return amount;
+  const convertAmount = (amount: number, fromCurrency: string = 'USD', toCurrency: string = currency.code): number => {
+    if (!rates[fromCurrency] || !rates[toCurrency]) return amount;
     
-    if (fromCurrency === currency.code) {
-      // If the amount is already in the target currency, return as is
+    if (fromCurrency === toCurrency) {
       return amount;
     }
     
     if (fromCurrency === 'USD') {
-      // Converting from USD to selected currency
-      return amount * rates[currency.code];
+      return amount * rates[toCurrency];
+    } else if (toCurrency === 'USD') {
+      return amount / rates[fromCurrency];
     } else {
-      // Converting from source currency to selected currency via USD
       const amountInUSD = amount / rates[fromCurrency];
-      return amountInUSD * rates[currency.code];
+      return amountInUSD * rates[toCurrency];
     }
   };
 
