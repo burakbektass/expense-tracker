@@ -12,12 +12,12 @@ export function CategoryTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-border">
-            <th className="p-4 text-left">Category</th>
-            <th className="p-4 text-right pr-14">Budget</th>
-            <th className="p-4 text-right">Income</th>
-            <th className="p-4 text-right">Expenses</th>
-            <th className="p-4 text-right">Balance</th>
-            <th className="p-4 text-center w-24">Actions</th>
+            <th className="p-4 text-left" style={{ width: '20%' }}>Category</th>
+            <th className="p-4 text-right pr-14" style={{ width: '20%' }}>Budget</th>
+            <th className="p-4 text-right" style={{ width: '15%' }}>Income</th>
+            <th className="p-4 text-right" style={{ width: '15%' }}>Expenses</th>
+            <th className="p-4 text-right" style={{ width: '15%' }}>Balance</th>
+            <th className="p-4 text-center" style={{ width: '15%' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
