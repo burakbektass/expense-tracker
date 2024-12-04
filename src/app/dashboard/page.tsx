@@ -110,8 +110,8 @@ export default function Dashboard() {
                 formatMoney={formatMoney} 
               />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+              <ResponsiveContainer width="100%" height="100%" key={`pie-${theme}`}>
+                <PieChart key={`pie-chart-${theme}`}>
                   <Pie
                     data={pieChartData}
                     cx="50%"
@@ -210,8 +210,8 @@ export default function Dashboard() {
                 formatMoney={formatMoney} 
               />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <ResponsiveContainer width="100%" height="100%" key={`bar-${theme}`}>
+                <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }} key={`bar-chart-${theme}`}>
                   <XAxis dataKey="month" />
                   <YAxis 
                     tickFormatter={(value) => `${currency.symbol}${formatMoney(value)}`}
