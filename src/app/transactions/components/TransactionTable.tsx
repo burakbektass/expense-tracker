@@ -87,19 +87,19 @@ export function TransactionTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full">
+      <table className="w-full table-fixed">
         <thead>
           <tr className="border-b border-border">
-            <th className="p-4 text-left">Category</th>
-            <th className="p-4 text-left">Description</th>
-            <th className="p-4 text-left cursor-pointer hover:bg-foreground/5" onClick={() => handleSort('date')}>
+            <th className="p-4 text-left w-[25%]">Category</th>
+            <th className="p-4 text-left w-[25%]">Description</th>
+            <th className="p-4 text-left w-[15%]" onClick={() => handleSort('date')}>
               <div className="flex items-center">
                 Date
                 <SortIcon active={sortField === 'date'} direction={sortDirection} />
               </div>
             </th>
-            <th className="p-4 text-left">Type</th>
-            <th className="p-4 text-right cursor-pointer hover:bg-foreground/5" onClick={() => handleSort('amount')}>
+            <th className="p-4 text-left w-[10%]">Type</th>
+            <th className="p-4 text-right w-[15%]" onClick={() => handleSort('amount')}>
               <div className="flex items-center justify-end">
                 Amount
                 <SortIcon 
@@ -108,7 +108,7 @@ export function TransactionTable({
                 />
               </div>
             </th>
-            <th className="p-4 text-center w-20">Actions</th>
+            <th className="p-4 text-center w-[10%]">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -117,14 +117,30 @@ export function TransactionTable({
             return (
               <tr key={transaction.id} className="border-b border-border hover:bg-foreground/5">
                 <td className="p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                  <div className="flex items-center gap-2 relative group">
+                    <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                       {category?.icon}
                     </span>
-                    <span>{category?.name}</span>
+                    <span className="truncate">{category?.name}</span>
+                    {(category?.name?.length || 0) > 15 && (
+                      <div className="absolute hidden group-hover:block left-0 -top-8 bg-black text-white text-sm rounded-lg px-2 py-1 whitespace-nowrap z-10">
+                        {category?.name}
+                        <div className="absolute left-4 top-full -mt-1 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
                   </div>
                 </td>
-                <td className="p-4">{transaction.description}</td>
+                <td className="p-4">
+                  <div className="relative group">
+                    <span className="truncate block">{transaction.description}</span>
+                    {transaction.description.length > 30 && (
+                      <div className="absolute hidden group-hover:block left-0 -top-8 bg-black text-white text-sm rounded-lg px-2 py-1 whitespace-nowrap z-10">
+                        {transaction.description}
+                        <div className="absolute left-4 top-full -mt-1 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
+                  </div>
+                </td>
                 <td className="p-4">{new Date(transaction.date).toLocaleDateString()}</td>
                 <td className="p-4">
                   <span className={transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}>
@@ -136,7 +152,7 @@ export function TransactionTable({
                   {formatMoney(
                     transaction.currency === currency.code
                       ? Math.abs(transaction.amount)
-                      : convertAmount(Math.abs(transaction.amount), transaction.currency || 'USD')
+                      : convertAmount(Math.abs(transaction.amount), transaction.currency)
                   )}
                 </td>
                 <td className="p-4 text-center">

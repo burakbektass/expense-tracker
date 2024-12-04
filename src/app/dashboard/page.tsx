@@ -136,11 +136,17 @@ export default function Dashboard() {
                       const x = cx + radius * Math.cos(-midAngle * RADIAN);
                       const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                      // Only show label if the segment is big enough (more than 5%)
-                      if (percent < 0.05) return null;
+                      const percentage = (percent * 100);
+                      if (isNaN(percentage)) return null;
 
-                      const percentage = (percent * 100).toFixed(0);
-                      if (isNaN(Number(percentage))) return null;
+                      let label;
+                      if (percentage > 99) {
+                        label = '>99%';
+                      } else if (percentage < 0.1) {
+                        label = '<0.1%';
+                      } else {
+                        label = `${percentage.toFixed(0)}%`;
+                      }
 
                       return (
                         <text
@@ -154,11 +160,12 @@ export default function Dashboard() {
                             textShadow: '0px 0px 3px rgba(0,0,0,0.5)'
                           }}
                         >
-                          {`${percentage}%`}
+                          {label}
                         </text>
                       );
                     }}
                     outerRadius="80%"
+                    minAngle={17}
                     dataKey="value"
                   >
                     {pieChartData.map((entry, index) => (
@@ -226,8 +233,8 @@ export default function Dashboard() {
                     formatter={barTooltipFormatter}
                     labelStyle={{ color: 'var(--foreground)' }}
                   />
-                  <Bar dataKey="Income" fill={barColors.income} />
-                  <Bar dataKey="Expenses" fill={barColors.expense} />
+                  <Bar dataKey="Income" fill={barColors.income} minPointSize={20} />
+                  <Bar dataKey="Expenses" fill={barColors.expense} minPointSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             )}

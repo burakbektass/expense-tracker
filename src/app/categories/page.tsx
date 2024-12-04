@@ -39,7 +39,8 @@ export default function Categories() {
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [errors, setErrors] = useState({
-    name: ''
+    name: '',
+    budget: ''
   });
 
   const categoryTotals = getCategoryTotals(transactions);
@@ -48,8 +49,9 @@ export default function Categories() {
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const validateForm = (name: string) => {
+  const validateForm = (name: string, budget: number | null) => {
     let nameError = '';
+    let budgetError = '';
 
     if (!name) {
       nameError = 'Name is required';
@@ -59,13 +61,17 @@ export default function Categories() {
       nameError = 'Name must be less than 64 characters';
     }
 
-    setErrors({ name: nameError });
-    return !nameError;
+    if (budget && budget > 100000000000) {
+      budgetError = 'Budget cannot exceed 100,000,000,000';
+    }
+
+    setErrors({ name: nameError, budget: budgetError });
+    return !nameError && !budgetError;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm(newCategory.name)) {
+    if (!validateForm(newCategory.name, newCategory.budget)) {
       return;
     }
     
@@ -103,7 +109,7 @@ export default function Categories() {
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingCategory || !validateForm(editingCategory.name)) {
+    if (!editingCategory || !validateForm(editingCategory.name, editingCategory.budget)) {
       return;
     }
 
@@ -318,7 +324,7 @@ export default function Categories() {
                     onChange={(e) => {
                       setNewCategory({ ...newCategory, name: e.target.value });
                       if (errors.name) {
-                        setErrors({ name: '' });
+                        setErrors({ name: '', budget: '' });
                       }
                     }}
                     className={`w-full p-2 pr-16 rounded-lg border ${
@@ -366,17 +372,24 @@ export default function Categories() {
                 <input
                   type="number"
                   value={newCategory.budget || ""}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = e.target.value ? Number(e.target.value) : null;
                     setNewCategory({
                       ...newCategory,
-                      budget: e.target.value ? Number(e.target.value) : null,
-                    })
-                  }
-                  className="input-field"
+                      budget: value,
+                    });
+                    if (errors.budget) {
+                      setErrors({ ...errors, budget: '' });
+                    }
+                  }}
+                  className={`input-field ${errors.budget ? 'border-red-500' : ''}`}
                   placeholder="Enter budget amount (optional)"
                   min="0"
-                  step="0.01"
+                  max="100000000000"
                 />
+                {errors.budget && (
+                  <p className="text-red-500 text-sm mt-1">{errors.budget}</p>
+                )}
               </div>
               <div className="flex justify-end gap-2">
                 <button
@@ -414,7 +427,7 @@ export default function Categories() {
                         prev ? { ...prev, name: e.target.value } : null
                       );
                       if (errors.name) {
-                        setErrors({ name: '' });
+                        setErrors({ name: '', budget: '' });
                       }
                     }}
                     className={`w-full p-2 pr-16 rounded-lg border ${
@@ -462,16 +475,25 @@ export default function Categories() {
               <div>
                 <label className="block mb-2">Budget (Optional)</label>
                 <input
-                  type="text"
-                  value={
-                    editingCategory?.budget
-                      ? formatInputValue(editingCategory.budget)
-                      : ""
-                  }
-                  onChange={handleBudgetChange}
-                  className="input-field"
+                  type="number"
+                  value={editingCategory?.budget || ""}
+                  onChange={(e) => {
+                    const value = e.target.value ? Number(e.target.value) : null;
+                    setEditingCategory(prev =>
+                      prev ? { ...prev, budget: value } : null
+                    );
+                    if (errors.budget) {
+                      setErrors({ ...errors, budget: '' });
+                    }
+                  }}
+                  className={`input-field ${errors.budget ? 'border-red-500' : ''}`}
                   placeholder="Enter budget amount (optional)"
+                  min="0"
+                  max="100000000000"
                 />
+                {errors.budget && (
+                  <p className="text-red-500 text-sm mt-1">{errors.budget}</p>
+                )}
               </div>
               <div className="flex justify-end gap-2">
                 <button

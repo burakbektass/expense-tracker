@@ -15,7 +15,7 @@ export default function Transactions() {
   const [newTransaction, setNewTransaction] = useState({
     description: '',
     amount: '',
-    type: 'expense' as const,
+    type: 'expense' as 'income' | 'expense',
     categoryId: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,8 +52,13 @@ export default function Transactions() {
     // Amount validation
     if (!newTransaction.amount) {
       newErrors.amount = 'Amount is required';
-    } else if (Number(newTransaction.amount) <= 0) {
-      newErrors.amount = 'Amount must be greater than 0';
+    } else {
+      const amountValue = Number(newTransaction.amount);
+      if (amountValue <= 0) {
+        newErrors.amount = 'Amount must be greater than 0';
+      } else if (amountValue > 1000000000) {
+        newErrors.amount = 'Amount cannot exceed 1,000,000,000';
+      }
     }
 
     // Category validation
@@ -181,6 +186,7 @@ export default function Transactions() {
                   placeholder="Enter amount"
                   step="0.01"
                   min="0"
+                  max="1000000000"
                 />
                 {errors.amount && (
                   <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
