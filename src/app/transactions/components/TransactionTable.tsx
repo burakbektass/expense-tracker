@@ -38,7 +38,7 @@ export function TransactionTable({
   onDelete 
 }) {
   const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [amountSortCount, setAmountSortCount] = useState(0);
 
   const handleSort = (field: SortField) => {
@@ -73,7 +73,7 @@ export function TransactionTable({
       case 'amount':
         return multiplier * (Math.abs(a.amount) - Math.abs(b.amount));
       default:
-        return 0;
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
     }
   });
 
