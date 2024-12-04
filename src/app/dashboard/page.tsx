@@ -11,6 +11,12 @@ import { useState } from 'react';
 import { ExpenseTable } from './components/ExpenseTable';
 import { TrendTable } from './components/TrendTable';
 
+// Add this interface near the top of the file
+interface MonthlyData {
+  income: number;
+  expense: number;
+}
+
 export default function Dashboard() {
   const { getCategoryTotals } = useCategories();
   const { transactions, isLoading } = useTransactions();
@@ -41,7 +47,7 @@ export default function Dashboard() {
   const barColors = generateBarColors(theme);
 
   // Prepare data for bar chart (monthly trends)
-  const monthlyData = transactions.reduce((acc, transaction) => {
+  const monthlyData = transactions.reduce<Record<string, MonthlyData>>((acc, transaction) => {
     const date = new Date(transaction.date);
     const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
     
