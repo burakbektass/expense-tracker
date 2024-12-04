@@ -38,6 +38,9 @@ export default function Categories() {
     budget: number | null;
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [errors, setErrors] = useState({
+    name: ''
+  });
 
   const categoryTotals = getCategoryTotals(transactions);
 
@@ -45,13 +48,30 @@ export default function Categories() {
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const validateForm = (name: string) => {
+    let nameError = '';
+
+    if (!name) {
+      nameError = 'Name is required';
+    } else if (name.length < 3) {
+      nameError = 'Name must be at least 3 characters';
+    } else if (name.length > 64) {
+      nameError = 'Name must be less than 64 characters';
+    }
+
+    setErrors({ name: nameError });
+    return !nameError;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newCategory.name.trim()) {
-      addCategory(newCategory.name, newCategory.icon, newCategory.budget);
-      setNewCategory({ name: "", icon: "📦", budget: null });
-      setShowAddModal(false);
+    if (!validateForm(newCategory.name)) {
+      return;
     }
+    
+    addCategory(newCategory.name, newCategory.icon, newCategory.budget);
+    setNewCategory({ name: "", icon: "📦", budget: null });
+    setShowAddModal(false);
   };
 
   const handleDeleteClick = (categoryId: string) => {
@@ -83,18 +103,20 @@ export default function Categories() {
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingCategory) {
-      const budget = editingCategory.budget
-        ? convertAmount(Number(editingCategory.budget), currency.code, "USD")
-        : null;
-
-      updateCategory(editingCategory.id, {
-        ...editingCategory,
-        budget,
-      });
-      setShowEditModal(false);
-      setEditingCategory(null);
+    if (!editingCategory || !validateForm(editingCategory.name)) {
+      return;
     }
+
+    const budget = editingCategory.budget
+      ? convertAmount(Number(editingCategory.budget), currency.code, "USD")
+      : null;
+
+    updateCategory(editingCategory.id, {
+      ...editingCategory,
+      budget,
+    });
+    setShowEditModal(false);
+    setEditingCategory(null);
   };
 
   const formatInputValue = (value: number | null): string => {
@@ -174,57 +196,41 @@ export default function Categories() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCategories.map((category) => (
             <div
               key={category.id}
-              className="p-6 rounded-2xl border border-border bg-background/50"
+              className="p-4 rounded-lg border border-border bg-background"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-20 flex items-center justify-center">
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
                     {category.icon}
+                  </span>
+                  <div className="relative group">
+                    <h3 className="font-medium truncate max-w-[150px]">
+                      {category.name}
+                    </h3>
+                    {category.name.length > 20 && (
+                      <div className="absolute hidden group-hover:block left-0 -top-8 bg-black text-white text-sm rounded-lg px-2 py-1 whitespace-nowrap z-10">
+                        {category.name}
+                        <div className="absolute left-4 top-full -mt-1 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{category.name}</h3>
-                      {category.budget && category.budgetWarning && (
-                        <div className="relative group">
-                          <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
-                          <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-10">
-                            {`Warning: Expenses have reached ${(
-                              (Math.abs(convertAmount(category.totalExpense) - convertAmount(category.totalIncome)) / 
-                              (convertAmount(category.budget || 1))
-                            * 100).toFixed(0))}% of budget`}
-                            <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black"></div>
-                          </div>
-                        </div>
-                      )}
+                  {category.budget && category.budgetWarning && (
+                    <div className="relative group">
+                      <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
+                      <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-10">
+                        {`Warning: Expenses have reached ${(
+                          (Math.abs(convertAmount(category.totalExpense) - convertAmount(category.totalIncome)) /
+                          convertAmount(category.budget || 1)) *
+                          100
+                        ).toFixed(0)}% of budget`}
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black"></div>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-sm opacity-60">
-                        {category.budget 
-                          ? `Budget: ${currency.symbol}${formatMoney(convertAmount(category.budget))}` 
-                          : "No budget set"}
-                      </p>
-                      <p className="text-sm text-green-500">
-                        Income: {currency.symbol}
-                        {formatMoney(convertAmount(category.totalIncome))}
-                      </p>
-                      <p className="text-sm text-red-500">
-                        Expenses: {currency.symbol}
-                        {formatMoney(convertAmount(category.totalExpense))}
-                      </p>
-                      <p className="text-sm font-medium">
-                        Balance: {currency.symbol}
-                        {formatMoney(
-                          convertAmount(
-                            category.totalIncome - category.totalExpense
-                          )
-                        )}
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -240,6 +246,29 @@ export default function Categories() {
                     🗑️
                   </button>
                 </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm opacity-60">
+                  {category.budget 
+                    ? `Budget: ${currency.symbol}${formatMoney(convertAmount(category.budget))}` 
+                    : "No budget set"}
+                </p>
+                <p className="text-sm text-green-500">
+                  Income: {currency.symbol}
+                  {formatMoney(convertAmount(category.totalIncome))}
+                </p>
+                <p className="text-sm text-red-500">
+                  Expenses: {currency.symbol}
+                  {formatMoney(convertAmount(category.totalExpense))}
+                </p>
+                <p className="text-sm font-medium">
+                  Balance: {currency.symbol}
+                  {formatMoney(
+                    convertAmount(
+                      category.totalIncome - category.totalExpense
+                    )
+                  )}
+                </p>
               </div>
             </div>
           ))}
@@ -282,15 +311,36 @@ export default function Categories() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block mb-2">Name</label>
-                <input
-                  type="text"
-                  value={newCategory.name}
-                  onChange={(e) =>
-                    setNewCategory({ ...newCategory, name: e.target.value })
-                  }
-                  className="input-field"
-                  placeholder="Category name"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={newCategory.name}
+                    onChange={(e) => {
+                      setNewCategory({ ...newCategory, name: e.target.value });
+                      if (errors.name) {
+                        setErrors({ name: '' });
+                      }
+                    }}
+                    className={`w-full p-2 pr-16 rounded-lg border ${
+                      errors.name ? 'border-red-500' : 'border-border'
+                    } bg-background`}
+                    placeholder="Enter category name"
+                    maxLength={64}
+                  />
+                  <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-sm ${
+                    newCategory.name.length >= 55 ? 'text-yellow-500' : 'text-gray-400'
+                  }`}>
+                    {newCategory.name.length}/64
+                  </span>
+                </div>
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
+                {newCategory.name.length >= 64 && (
+                  <p className="text-yellow-500 text-sm mt-1">
+                    ⚠️ Maximum character limit reached
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block mb-2">Icon</label>
@@ -355,17 +405,38 @@ export default function Categories() {
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
                 <label className="block mb-2">Name</label>
-                <input
-                  type="text"
-                  value={editingCategory?.name}
-                  onChange={(e) =>
-                    setEditingCategory((prev) =>
-                      prev ? { ...prev, name: e.target.value } : null
-                    )
-                  }
-                  className="input-field"
-                  placeholder="Category name"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editingCategory?.name || ''}
+                    onChange={(e) => {
+                      setEditingCategory(prev => 
+                        prev ? { ...prev, name: e.target.value } : null
+                      );
+                      if (errors.name) {
+                        setErrors({ name: '' });
+                      }
+                    }}
+                    className={`w-full p-2 pr-16 rounded-lg border ${
+                      errors.name ? 'border-red-500' : 'border-border'
+                    } bg-background`}
+                    placeholder="Enter category name"
+                    maxLength={64}
+                  />
+                  <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-sm ${
+                    (editingCategory?.name.length || 0) >= 55 ? 'text-yellow-500' : 'text-gray-400'
+                  }`}>
+                    {editingCategory?.name.length || 0}/64
+                  </span>
+                </div>
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
+                {(editingCategory?.name.length || 0) >= 64 && (
+                  <p className="text-yellow-500 text-sm mt-1">
+                    ⚠️ Maximum character limit reached
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block mb-2">Icon</label>
