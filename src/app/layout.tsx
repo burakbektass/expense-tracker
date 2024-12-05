@@ -1,5 +1,5 @@
 import { CurrencyProvider } from '@/context/CurrencyContext'; 
-import { ThemeProvider } from '@/context/ThemeProvider';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { TransactionProvider } from '@/context/TransactionContext';
 import { CategoryProvider } from '@/context/CategoryContext'; 
 import Navigation from '@/components/Navigation';
