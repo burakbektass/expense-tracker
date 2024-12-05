@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navigation() {
     const { theme, toggleTheme } = useTheme();
     const { currency, setCurrency, currencies } = useCurrency();
+    const { language, setLanguage, languages } = useLanguage();
   
     return (
       <nav className="nav-sidebar md:fixed md:left-0 md:top-0 md:h-screen md:w-64 bg-background-10 backdrop-blur-xl border-r border-border p-6">
@@ -54,6 +56,24 @@ export default function Navigation() {
               {currencies.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.symbol} - {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="hidden md:block">
+            <label className="block text-sm mb-2">Language</label>
+            <select
+              value={language.code}
+              onChange={(e) => {
+                const selected = languages.find(l => l.code === e.target.value);
+                if (selected) setLanguage(selected);
+              }}
+              className="w-full px-4 py-2 rounded-lg bg-background border border-border select-field"
+            >
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.nativeName}
                 </option>
               ))}
             </select>

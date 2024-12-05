@@ -5,6 +5,7 @@ import { CategoryProvider } from '@/context/CategoryContext';
 import Navigation from '@/components/Navigation';
 import '@/app/globals.css';
 import { Metadata } from 'next';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export const metadata: Metadata = {
   title: {
@@ -66,18 +67,20 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <CurrencyProvider>
-            <TransactionProvider>
-              <CategoryProvider>
-                <div className="flex">
-                  <Navigation />
-                  <main className="flex-1 md:ml-64 p-6">
-                    {children}
-                  </main>
-                </div>
-              </CategoryProvider>
-            </TransactionProvider>
-          </CurrencyProvider>
+          <LanguageProvider>
+            <CurrencyProvider>
+              <TransactionProvider>
+                <CategoryProvider>
+                  <div className="flex">
+                    <Navigation />
+                    <main className="flex-1 md:ml-64 p-6">
+                      {children}
+                    </main>
+                  </div>
+                </CategoryProvider>
+              </TransactionProvider>
+            </CurrencyProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
