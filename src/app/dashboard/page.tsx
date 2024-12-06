@@ -4,6 +4,7 @@ import { useCategories } from '@/context/CategoryContext';
 import { useTransactions } from '@/context/TransactionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
 import { formatMoney } from '@/lib/formatUtils';
@@ -22,11 +23,12 @@ export default function Dashboard() {
   const { transactions, isLoading } = useTransactions();
   const { theme } = useTheme();
   const { currency, convertAmount } = useCurrency();
+  const { t } = useLanguage();
   const [showPieAsTable, setShowPieAsTable] = useState(false);
   const [showBarAsTable, setShowBarAsTable] = useState(false);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-96">Loading...</div>;
+    return <div className="flex items-center justify-center h-96">{t('common.loading')}</div>;
   }
 
   const categoryTotals = getCategoryTotals(transactions);
@@ -67,8 +69,8 @@ export default function Dashboard() {
 
   const barChartData = Object.entries(monthlyData).map(([month, data]) => ({
     month,
-    Income: data.income,
-    Expenses: data.expense
+    income: data.income,
+    expense: data.expense
   }));
 
   // Custom tooltip formatter for the bar chart
@@ -78,21 +80,21 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
+      <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">Total Balance</h3>
+          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalBalance')}</h3>
           <p className="text-3xl font-bold">{currency.symbol}{formatMoney(convertAmount(balance))}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">Total Income</h3>
+          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalIncome')}</h3>
           <p className="text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(convertAmount(totalIncome))}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">Total Expenses</h3>
+          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalExpenses')}</h3>
           <p className="text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(convertAmount(totalExpense))}</p>
         </div>
       </div>
@@ -100,12 +102,12 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl border border-border bg-background/50">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Expense Distribution</h2>
+            <h2 className="text-xl font-semibold">{t('dashboard.expenseDistribution')}</h2>
             <button
               onClick={() => setShowPieAsTable(!showPieAsTable)}
               className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
             >
-              {showPieAsTable ? '📊 Show Chart' : '📋 Show Table'}
+              {showPieAsTable ? t('dashboard.showChart') : t('dashboard.showTable')}
             </button>
           </div>
           <div className="h-[400px]">
@@ -207,12 +209,12 @@ export default function Dashboard() {
         
         <div className="p-6 rounded-2xl border border-border bg-background/50">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Monthly Trend</h2>
+            <h2 className="text-xl font-semibold">{t('dashboard.monthlyTrends')}</h2>
             <button
               onClick={() => setShowBarAsTable(!showBarAsTable)}
               className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
             >
-              {showBarAsTable ? '📊 Show Chart' : '📋 Show Table'}
+              {showBarAsTable ? t('dashboard.showChart') : t('dashboard.showTable')}
             </button>
           </div>
           <div className="h-[400px]">
@@ -233,8 +235,8 @@ export default function Dashboard() {
                     formatter={barTooltipFormatter}
                     labelStyle={{ color: 'var(--foreground)' }}
                   />
-                  <Bar dataKey="Income" fill={barColors.income} minPointSize={20} />
-                  <Bar dataKey="Expenses" fill={barColors.expense} minPointSize={20} />
+                  <Bar dataKey="income" fill={barColors.income} minPointSize={20} />
+                  <Bar dataKey="expense" fill={barColors.expense} minPointSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             )}

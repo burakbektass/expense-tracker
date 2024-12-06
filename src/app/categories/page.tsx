@@ -6,6 +6,7 @@ import { useCategories } from "@/context/CategoryContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { formatMoney } from "@/lib/formatUtils";
 import { CategoryTable } from "@/app/categories/components/CategoryTable";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Categories() {
   const {
@@ -20,6 +21,8 @@ export default function Categories() {
   const { transactions, deleteTransactionsByCategory } = useTransactions();
   const { currency, convertAmount } = useCurrency();
   const [showAddModal, setShowAddModal] = useState(false);
+  const { t } = useLanguage();
+
   const [showDeleteModal, setShowDeleteModal] = useState<{
     show: boolean;
     categoryId: string;
@@ -54,15 +57,15 @@ export default function Categories() {
     let budgetError = '';
 
     if (!name) {
-      nameError = 'Name is required';
+      nameError = t('categories.form.validation.nameRequired');
     } else if (name.length < 3) {
-      nameError = 'Name must be at least 3 characters';
+      nameError = t('categories.form.validation.nameMinLength');
     } else if (name.length > 64) {
-      nameError = 'Name must be less than 64 characters';
+      nameError = t('categories.form.validation.nameMaxLength');
     }
 
     if (budget && budget > 100000000000) {
-      budgetError = 'Budget cannot exceed 100,000,000,000';
+      budgetError = t('categories.form.validation.budgetMax');
     }
 
     setErrors({ name: nameError, budget: budgetError });
@@ -357,14 +360,14 @@ export default function Categories() {
                   }
                   className="input-field"
                 >
-                  <option value="📦">📦 Box</option>
-                  <option value="🛍️">🛍️ Shopping</option>
-                  <option value="🍽️">🍽️ Food</option>
-                  <option value="🚗">🚗 Transport</option>
-                  <option value="🎮">🎮 Entertainment</option>
-                  <option value="📃">📃 Bills</option>
-                  <option value="🏥">🏥 Healthcare</option>
-                  <option value="📚">📚 Education</option>
+                  <option value="📦">{t('categories.icons.box')}</option>
+                  <option value="🛍️">{t('categories.icons.shopping')}</option>
+                  <option value="🍽️">{t('categories.icons.food')}</option>
+                  <option value="🚗">{t('categories.icons.transport')}</option>
+                  <option value="🎮">{t('categories.icons.entertainment')}</option>
+                  <option value="📃">{t('categories.icons.bills')}</option>
+                  <option value="🏥">{t('categories.icons.healthcare')}</option>
+                  <option value="📚">{t('categories.icons.education')}</option>
                 </select>
               </div>
               <div>
@@ -462,14 +465,14 @@ export default function Categories() {
                   }
                   className="input-field"
                 >
-                  <option value="📦">📦 Box</option>
-                  <option value="🛍️">🛍️ Shopping</option>
-                  <option value="🍽️">🍽️ Food</option>
-                  <option value="🚗">🚗 Transport</option>
-                  <option value="🎮">🎮 Entertainment</option>
-                  <option value="📃">📃 Bills</option>
-                  <option value="🏥">🏥 Healthcare</option>
-                  <option value="📚">📚 Education</option>
+                  <option value="📦">{t('categories.icons.box')}</option>
+                  <option value="🛍️">{t('categories.icons.shopping')}</option>
+                  <option value="🍽️">{t('categories.icons.food')}</option>
+                  <option value="🚗">{t('categories.icons.transport')}</option>
+                  <option value="🎮">{t('categories.icons.entertainment')}</option>
+                  <option value="📃">{t('categories.icons.bills')}</option>
+                  <option value="🏥">{t('categories.icons.healthcare')}</option>
+                  <option value="📚">{t('categories.icons.education')}</option>
                 </select>
               </div>
               <div>
@@ -507,7 +510,7 @@ export default function Categories() {
                   Cancel
                 </button>
                 <button type="submit" className="button-primary">
-                  Save Changes
+                  {t('common.saveChanges')}
                 </button>
               </div>
             </form>
