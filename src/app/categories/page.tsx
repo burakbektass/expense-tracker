@@ -147,12 +147,12 @@ export default function Categories() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold">Categories</h1>
+        <h1 className="text-4xl font-bold">{t('categories.title')}</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search categories..."
+              placeholder={t('categories.searchCategories')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="px-4 py-2 pr-10 rounded-lg border border-border bg-background"
@@ -168,12 +168,12 @@ export default function Categories() {
             {viewMode === "card" ? (
               <>
                 <span>📊</span>
-                View as Table
+                {t('categories.viewMode.table')}
               </>
             ) : (
               <>
                 <span>📇</span>
-                View as Cards
+                {t('categories.viewMode.card')}
               </>
             )}
           </button>
@@ -188,7 +188,7 @@ export default function Categories() {
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               disabled={hasReachedLimit}
             >
-              Add Category
+              {t('categories.addCategory')}
             </button>
           </div>
         </div>
@@ -259,19 +259,19 @@ export default function Categories() {
               <div className="space-y-1">
                 <p className="text-sm opacity-60">
                   {category.budget 
-                    ? `Budget: ${currency.symbol}${formatMoney(convertAmount(category.budget))}` 
-                    : "No budget set"}
+                    ? `${t('categories.budgetPrefix')}${currency.symbol}${formatMoney(convertAmount(category.budget))}` 
+                    : t('categories.noBudget')}
                 </p>
                 <p className="text-sm text-green-500">
-                  Income: {currency.symbol}
+                  {t('categories.incomePrefix')}: {currency.symbol}
                   {formatMoney(convertAmount(category.totalIncome))}
                 </p>
                 <p className="text-sm text-red-500">
-                  Expenses: {currency.symbol}
+                  {t('categories.expensesPrefix')}: {currency.symbol}
                   {formatMoney(convertAmount(category.totalExpense))}
                 </p>
                 <p className="text-sm font-medium">
-                  Balance: {currency.symbol}
+                  {t('categories.balancePrefix')}: {currency.symbol}
                   {formatMoney(
                     convertAmount(
                       category.totalIncome - category.totalExpense
@@ -287,11 +287,9 @@ export default function Categories() {
       {showDeleteModal.show && (
         <div className="modal-container">
           <div className="modal-content">
-            <h2 className="text-2xl font-bold mb-4">Delete Category</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('categories.deleteCategory')}</h2>
             <p className="mb-4">
-              This category has associated transactions. Deleting it will also
-              delete all related transactions. Are you sure you want to
-              continue?
+              {t('categories.deleteWarning')}
             </p>
             <div className="flex justify-end gap-2">
               <button
@@ -300,13 +298,13 @@ export default function Categories() {
                 }
                 className="px-4 py-2 border border-border rounded-lg"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleConfirmDelete}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -316,10 +314,10 @@ export default function Categories() {
       {showAddModal && (
         <div className="modal-container">
           <div className="modal-content">
-            <h2 className="text-2xl font-bold mb-4">Add Category</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('categories.addCategory')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block mb-2">Name</label>
+                <label className="block mb-2">{t('categories.name')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -333,7 +331,7 @@ export default function Categories() {
                     className={`w-full p-2 pr-16 rounded-lg border ${
                       errors.name ? 'border-red-500' : 'border-border'
                     } bg-background`}
-                    placeholder="Enter category name"
+                    placeholder={t('categories.namePlaceholder')}
                     maxLength={64}
                   />
                   <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-sm ${
@@ -347,12 +345,12 @@ export default function Categories() {
                 )}
                 {newCategory.name.length >= 64 && (
                   <p className="text-yellow-500 text-sm mt-1">
-                    ⚠️ Maximum character limit reached
+                    ⚠️ {t('categories.maxLimitReached')}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block mb-2">Icon</label>
+                <label className="block mb-2">{t('categories.icon')}</label>
                 <select
                   value={newCategory.icon}
                   onChange={(e) =>
@@ -371,7 +369,7 @@ export default function Categories() {
                 </select>
               </div>
               <div>
-                <label className="block mb-2">Budget (Optional)</label>
+                <label className="block mb-2">{t('categories.budgetOptional')}</label>
                 <input
                   type="number"
                   value={newCategory.budget || ""}
@@ -386,7 +384,7 @@ export default function Categories() {
                     }
                   }}
                   className={`input-field ${errors.budget ? 'border-red-500' : ''}`}
-                  placeholder="Enter budget amount (optional)"
+                  placeholder={t('categories.budgetPlaceholder')}
                   min="0"
                   max="100000000000"
                 />
@@ -403,10 +401,10 @@ export default function Categories() {
                   }}
                   className="button-secondary"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="button-primary">
-                  Add Category
+                  {t('categories.addCategory')}
                 </button>
               </div>
             </form>
@@ -417,10 +415,10 @@ export default function Categories() {
       {showEditModal && (
         <div className="modal-container">
           <div className="modal-content">
-            <h2 className="text-2xl font-bold mb-4">Edit Category</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('categories.editCategory')}</h2>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
-                <label className="block mb-2">Name</label>
+                <label className="block mb-2">{t('categories.name')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -436,7 +434,7 @@ export default function Categories() {
                     className={`w-full p-2 pr-16 rounded-lg border ${
                       errors.name ? 'border-red-500' : 'border-border'
                     } bg-background`}
-                    placeholder="Enter category name"
+                    placeholder={t('categories.namePlaceholder')}
                     maxLength={64}
                   />
                   <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-sm ${
@@ -450,12 +448,12 @@ export default function Categories() {
                 )}
                 {(editingCategory?.name.length || 0) >= 64 && (
                   <p className="text-yellow-500 text-sm mt-1">
-                    ⚠️ Maximum character limit reached
+                    ⚠️ {t('categories.maxLimitReached')}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block mb-2">Icon</label>
+                <label className="block mb-2">{t('categories.icon')}</label>
                 <select
                   value={editingCategory?.icon}
                   onChange={(e) =>
@@ -476,7 +474,7 @@ export default function Categories() {
                 </select>
               </div>
               <div>
-                <label className="block mb-2">Budget (Optional)</label>
+                <label className="block mb-2">{t('categories.budgetOptional')}</label>
                 <input
                   type="number"
                   value={editingCategory?.budget || ""}
@@ -490,7 +488,7 @@ export default function Categories() {
                     }
                   }}
                   className={`input-field ${errors.budget ? 'border-red-500' : ''}`}
-                  placeholder="Enter budget amount (optional)"
+                  placeholder={t('categories.budgetPlaceholder')}
                   min="0"
                   max="100000000000"
                 />
@@ -507,7 +505,7 @@ export default function Categories() {
                   }}
                   className="button-secondary"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="button-primary">
                   {t('common.saveChanges')}
