@@ -40,14 +40,37 @@ export const tr = {
     expenses: 'Gider',
     noTransactions: 'İşlem bulunamadı',
     budgetWarning: 'Uyarı: Harcamalar bütçenin {percent}%\'sine ulaştı',
+    charts: {
+      pieChart: {
+        title: 'Harcama Dağılımı',
+        noData: 'Veri bulunamadı',
+        legend: 'Kategoriler'
+      },
+      barChart: {
+        title: 'Aylık Trendler',
+        noData: 'Veri bulunamadı',
+        income: 'Gelir',
+        expenses: 'Gider',
+        xAxis: 'Ay',
+        yAxis: 'Tutar'
+      },
+      toggleView: {
+        showChart: 'Grafik Göster',
+        showTable: 'Tablo Göster'
+      }
+    }
   },
   transactions: {
     title: 'İşlemler',
     addTransaction: 'İşlem Ekle',
+    cancel: 'İptal',
+    addNewTransaction: 'Yeni İşlem Ekle',
     description: 'Açıklama',
     amount: 'Tutar',
+    amountPlaceholder: 'Tutar girin',
     type: 'Tür',
     category: 'Kategori',
+    selectCategory: 'Kategori seçin',
     date: 'Tarih',
     income: 'Gelir',
     expense: 'Gider',
@@ -55,6 +78,7 @@ export const tr = {
     noTransactions: 'İşlem bulunamadı',
     deleteConfirm: 'Bu işlemi silmek istediğinizden emin misiniz?',
     actions: 'İşlemler',
+    descriptionPlaceholder: 'Açıklama girin',
     validation: {
       descriptionRequired: 'Açıklama gereklidir',
       descriptionLength: 'Açıklama 3 ile 64 karakter arasında olmalıdır',
@@ -62,7 +86,9 @@ export const tr = {
       amountPositive: 'Tutar 0\'dan büyük olmalıdır',
       amountMax: 'Tutar 1.000.000.000\'u geçemez',
       categoryRequired: 'Kategori gereklidir',
-      dateRequired: 'Tarih gereklidir'
+      dateRequired: 'Tarih gereklidir',
+      maxCharacterLimit: 'Maksimum karakter sınırına ulaşıldı',
+      descriptionMax: 'Açıklama 64 karakterden az olmalıdır',
     },
   },
   categories: {
@@ -131,7 +157,13 @@ export const tr = {
     },
     icons: {
       box: '📦 Kutu',
-      shopping: '🛍️ Alışveriş'
+      shopping: '🛍️ Alışveriş',
+      food: '🍽️ Yemek',
+      transport: '🚗 Ulaşım',
+      entertainment: '🎮 Eğlence',
+      bills: '📃 Faturalar',
+      healthcare: '🏥 Sağlık',
+      education: '📚 Eğitim',
     }
   }
 } 

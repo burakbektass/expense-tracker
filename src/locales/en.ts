@@ -40,14 +40,37 @@ export const en = {
     expenses: 'Expenses',
     noTransactions: 'No transactions found',
     budgetWarning: 'Warning: Expenses have reached {percent}% of budget',
+    charts: {
+      pieChart: {
+        title: 'Expense Distribution',
+        noData: 'No data available',
+        legend: 'Categories'
+      },
+      barChart: {
+        title: 'Monthly Trends',
+        noData: 'No data available',
+        income: 'Income',
+        expenses: 'Expenses',
+        xAxis: 'Month',
+        yAxis: 'Amount'
+      },
+      toggleView: {
+        showChart: 'Show Chart',
+        showTable: 'Show Table'
+      }
+    }
   },
   transactions: {
     title: 'Transactions',
     addTransaction: 'Add Transaction',
+    addNewTransaction: 'Add New Transaction',
+    cancel: 'Cancel',
     description: 'Description',
     amount: 'Amount',
+    amountPlaceholder: 'Enter amount',
     type: 'Type',
     category: 'Category',
+    selectCategory: 'Select a category',
     date: 'Date',
     income: 'Income',
     expense: 'Expense',
@@ -55,6 +78,7 @@ export const en = {
     noTransactions: 'No transactions found',
     deleteConfirm: 'Are you sure you want to delete this transaction?',
     actions: 'Actions',
+    descriptionPlaceholder: 'Enter description',
     validation: {
       descriptionRequired: 'Description is required',
       descriptionLength: 'Description must be between 3 and 64 characters',
@@ -62,7 +86,9 @@ export const en = {
       amountPositive: 'Amount must be greater than 0',
       amountMax: 'Amount cannot exceed 1,000,000,000',
       categoryRequired: 'Category is required',
-      dateRequired: 'Date is required'
+      dateRequired: 'Date is required',
+      maxCharacterLimit: 'Maximum character limit reached',
+      descriptionMax: 'Description must be less than 64 characters',
     },
   },
   categories: {

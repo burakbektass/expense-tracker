@@ -6,7 +6,7 @@ type SortField = 'date' | 'amount';
 type SortDirection = 'asc' | 'desc' | 'none';
 
 const SortIcon = ({ active, direction }) => {
-  if (!active) {
+  if (!active || direction === 'none') {
     return (
       <span className="ml-2 text-gray-400">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -40,43 +40,34 @@ export function TransactionTable({
 }) {
   const { t } = useLanguage();
   const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [amountSortCount, setAmountSortCount] = useState(0);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleSort = (field: SortField) => {
-    if (field === 'amount') {
-      setAmountSortCount((prev) => (prev + 1) % 3);
-      if (amountSortCount === 0) {
-        setSortField('amount');
-        setSortDirection('asc');
-      } else if (amountSortCount === 1) {
-        setSortDirection('desc');
-      } else {
-        setSortField('date');
-        setSortDirection('desc');
-        setAmountSortCount(0);
-      }
+    if (sortField === field) {
+      setSortDirection(prev => {
+        if (prev === 'asc') return 'desc';
+        if (prev === 'desc') return 'none';
+        return 'asc';
+      });
     } else {
-      if (sortField === field) {
-        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-      } else {
-        setSortField(field);
-        setSortDirection('desc');
-      }
+      setSortField(field);
+      setSortDirection('asc');
     }
   };
 
   const sortedTransactions = [...transactions].sort((a, b) => {
-    const multiplier = sortDirection === 'asc' ? 1 : -1;
+    if (sortDirection === 'none') return 0;
     
-    switch (sortField) {
-      case 'date':
-        return multiplier * (new Date(b.date).getTime() - new Date(a.date).getTime());
-      case 'amount':
-        return multiplier * (Math.abs(a.amount) - Math.abs(b.amount));
-      default:
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (sortField === 'date') {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+    } else if (sortField === 'amount') {
+      const amountA = convertAmount(Math.abs(a.amount), a.currency);
+      const amountB = convertAmount(Math.abs(b.amount), b.currency);
+      return sortDirection === 'asc' ? amountA - amountB : amountB - amountA;
     }
+    return 0;
   });
 
   return (
@@ -84,12 +75,34 @@ export function TransactionTable({
       <table className="w-full">
         <thead>
           <tr>
-            <th className="text-left p-4">{t('transactions.category')}</th>
-            <th className="text-left p-4">{t('transactions.description')}</th>
-            <th className="text-left p-4">{t('transactions.date')}</th>
-            <th className="text-left p-4">{t('transactions.type')}</th>
-            <th className="text-right p-4">{t('transactions.amount')}</th>
-            <th className="text-center p-4">{t('transactions.actions')}</th>
+            <th className="p-4 text-left">{t('transactions.category')}</th>
+            <th className="p-4 text-left">{t('transactions.description')}</th>
+            <th 
+              className="p-4 text-left cursor-pointer hover:bg-foreground/5" 
+              onClick={() => handleSort('date')}
+            >
+              <div className="flex items-center">
+                {t('transactions.date')}
+                <SortIcon 
+                  active={sortField === 'date'} 
+                  direction={sortDirection} 
+                />
+              </div>
+            </th>
+            <th className="p-4 text-left">{t('transactions.type')}</th>
+            <th 
+              className="p-4 text-right cursor-pointer hover:bg-foreground/5" 
+              onClick={() => handleSort('amount')}
+            >
+              <div className="flex items-center justify-end">
+                {t('transactions.amount')}
+                <SortIcon 
+                  active={sortField === 'amount'} 
+                  direction={sortDirection} 
+                />
+              </div>
+            </th>
+            <th className="p-4 text-center">{t('transactions.actions')}</th>
           </tr>
         </thead>
         <tbody>

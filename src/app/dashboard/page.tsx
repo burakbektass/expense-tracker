@@ -4,14 +4,13 @@ import { useCategories } from '@/context/CategoryContext';
 import { useTransactions } from '@/context/TransactionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useCurrency } from '@/context/CurrencyContext';
-import { useLanguage } from '@/context/LanguageContext';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { generateColors, generateBarColors } from '@/lib/colorUtils';
 import { formatMoney } from '@/lib/formatUtils';
 import { useState } from 'react';
 import { ExpenseTable } from './components/ExpenseTable';
 import { TrendTable } from './components/TrendTable';
-
+import { useLanguage } from '@/context/LanguageContext';
 // Add this interface near the top of the file
 interface MonthlyData {
   income: number;
@@ -23,12 +22,11 @@ export default function Dashboard() {
   const { transactions, isLoading } = useTransactions();
   const { theme } = useTheme();
   const { currency, convertAmount } = useCurrency();
-  const { t } = useLanguage();
   const [showPieAsTable, setShowPieAsTable] = useState(false);
   const [showBarAsTable, setShowBarAsTable] = useState(false);
-
+  const { t } = useLanguage();
   if (isLoading) {
-    return <div className="flex items-center justify-center h-96">{t('common.loading')}</div>;
+    return <div className="flex items-center justify-center h-96">Loading...</div>;
   }
 
   const categoryTotals = getCategoryTotals(transactions);
@@ -69,8 +67,8 @@ export default function Dashboard() {
 
   const barChartData = Object.entries(monthlyData).map(([month, data]) => ({
     month,
-    income: data.income,
-    expense: data.expense
+    Income: data.income,
+    Expenses: data.expense
   }));
 
   // Custom tooltip formatter for the bar chart
@@ -80,7 +78,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
+      <h1 className="text-4xl font-bold">Dashboard</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
@@ -107,7 +105,7 @@ export default function Dashboard() {
               onClick={() => setShowPieAsTable(!showPieAsTable)}
               className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
             >
-              {showPieAsTable ? t('dashboard.showChart') : t('dashboard.showTable')}
+              {showPieAsTable ? '📊 '+t('dashboard.showChart') : '📋 '+t('dashboard.showTable')}
             </button>
           </div>
           <div className="h-[400px]">
@@ -214,7 +212,7 @@ export default function Dashboard() {
               onClick={() => setShowBarAsTable(!showBarAsTable)}
               className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
             >
-              {showBarAsTable ? t('dashboard.showChart') : t('dashboard.showTable')}
+              {showBarAsTable ? '📊 '+t('dashboard.showChart') : '📋 '+t('dashboard.showTable')}
             </button>
           </div>
           <div className="h-[400px]">
@@ -235,8 +233,8 @@ export default function Dashboard() {
                     formatter={barTooltipFormatter}
                     labelStyle={{ color: 'var(--foreground)' }}
                   />
-                  <Bar dataKey="income" fill={barColors.income} minPointSize={20} />
-                  <Bar dataKey="expense" fill={barColors.expense} minPointSize={20} />
+                  <Bar dataKey="Income" fill={barColors.income} minPointSize={20} />
+                  <Bar dataKey="Expenses" fill={barColors.expense} minPointSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             )}

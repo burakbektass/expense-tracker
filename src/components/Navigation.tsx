@@ -42,7 +42,7 @@ export default function Navigation() {
             className="hidden md:flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-foreground-5 transition-colors mt-auto"
           >
             <span>{theme === 'light' ? '🌙' : '☀️'}</span>
-            <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+            <span>{theme === 'light' ? t('navigation.darkMode') : t('navigation.lightMode')}</span>
           </button>
 
           <div className="hidden md:block">
