@@ -45,6 +45,7 @@ export default function Categories() {
     name: '',
     budget: ''
   });
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const categoryTotals = getCategoryTotals(transactions);
 
@@ -180,16 +181,24 @@ export default function Categories() {
           <div className="flex flex-col items-end gap-2">
             {hasReachedLimit && (
               <p className="text-sm text-yellow-500">
-                Maximum category limit (20) reached
+                {t('categories.categoryLimit')}
               </p>
             )}
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              disabled={hasReachedLimit}
-            >
-              {t('categories.addCategory')}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                disabled={hasReachedLimit}
+              >
+                {t('categories.addCategory')}
+              </button>
+              <button
+                onClick={() => setShowDeleteAllModal(true)}
+                className="button-danger"
+              >
+                {t('transactions.deleteAll')}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -512,6 +521,36 @@ export default function Categories() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteAllModal && (
+        <div className="modal-container">
+          <div className="modal-content">
+            <h2 className="text-2xl font-bold mb-4">{t('categories.deleteAllTitle')}</h2>
+            <p className="mb-4">{t('categories.deleteAllConfirm')}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteAllModal(false)}
+                className="button-secondary"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => {
+                  categories.forEach(category => {
+                    deleteCategory(category.id, true, (categoryId) => {
+                      deleteTransactionsByCategory(categoryId);
+                    });
+                  });
+                  setShowDeleteAllModal(false);
+                }}
+                className="button-danger"
+              >
+                {t('common.delete')}
+              </button>
+            </div>
           </div>
         </div>
       )}

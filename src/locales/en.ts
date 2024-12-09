@@ -170,6 +170,8 @@ export const en = {
       healthcare: '🏥 Healthcare',
       education: '📚 Education',
     },
+    deleteAllTitle: 'Delete All Categories',
+    deleteAllConfirm: 'Are you sure you want to delete all categories and their associated transactions? This action cannot be undone.',
   },
   defaultCategories: {
     groceries: 'Groceries',

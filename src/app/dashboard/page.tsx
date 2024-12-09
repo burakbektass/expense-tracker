@@ -67,18 +67,18 @@ export default function Dashboard() {
 
   const barChartData = Object.entries(monthlyData).map(([month, data]) => ({
     month,
-    Income: data.income,
-    Expenses: data.expense
+    Income: Math.abs(data.income),
+    Expenses: Math.abs(data.expense)
   }));
 
   // Custom tooltip formatter for the bar chart
   const barTooltipFormatter = (value: number) => {
-    return `${currency.symbol}${formatMoney(value)}`;
+    return `${currency.symbol}${formatMoney(Math.abs(value))}`;
   };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
+      <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
@@ -109,7 +109,15 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="h-[400px]">
-            {showPieAsTable ? (
+            {pieChartData.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center gap-4">
+                <span className="text-4xl">📊</span>
+                <div>
+                  <p className="text-lg font-medium mb-1">{t('dashboard.charts.pieChart.noData')}</p>
+                  <p className="text-sm text-muted-foreground">{t('dashboard.noTransactions')}</p>
+                </div>
+              </div>
+            ) : showPieAsTable ? (
               <ExpenseTable 
                 data={pieChartData} 
                 currency={currency} 
@@ -139,14 +147,13 @@ export default function Dashboard() {
                       const percentage = (percent * 100);
                       if (isNaN(percentage)) return null;
 
-                      let label;
-                      if (percentage > 99) {
-                        label = '>99%';
-                      } else if (percentage < 0.1) {
-                        label = '<0.1%';
-                      } else {
-                        label = `${percentage.toFixed(0)}%`;
-                      }
+                      const label = pieChartData.length === 1 
+                        ? '100%'
+                        : percentage > 99 
+                          ? '>99%' 
+                          : percentage < 0.1 
+                            ? '<0.1%' 
+                            : `${percentage.toFixed(0)}%`;
 
                       return (
                         <text
@@ -216,7 +223,15 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="h-[400px]">
-            {showBarAsTable ? (
+            {Object.keys(monthlyData).length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center gap-4">
+                <span className="text-4xl">📈</span>
+                <div>
+                  <p className="text-lg font-medium mb-1">{t('dashboard.charts.barChart.noData')}</p>
+                  <p className="text-sm text-muted-foreground">{t('dashboard.noTransactions')}</p>
+                </div>
+              </div>
+            ) : showBarAsTable ? (
               <TrendTable 
                 data={barChartData} 
                 currency={currency} 
@@ -224,17 +239,41 @@ export default function Dashboard() {
               />
             ) : (
               <ResponsiveContainer width="100%" height="100%" key={`bar-${theme}`}>
-                <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }} key={`bar-chart-${theme}`}>
+                <BarChart 
+                  data={barChartData} 
+                  margin={{ top: 20, right: 30, left: 50, bottom: 5 }} 
+                  key={`bar-chart-${theme}`}
+                >
                   <XAxis dataKey="month" />
                   <YAxis 
-                    tickFormatter={(value) => `${currency.symbol}${formatMoney(value)}`}
+                    tickFormatter={(value) => {
+                      if (value >= 1000000000) {
+                        return `${currency.symbol}${(value / 1000000000).toFixed(1)}B`;
+                      } else if (value >= 1000000) {
+                        return `${currency.symbol}${(value / 1000000).toFixed(1)}M`;
+                      } else if (value >= 1000) {
+                        return `${currency.symbol}${(value / 1000).toFixed(1)}K`;
+                      }
+                      return `${currency.symbol}${formatMoney(Math.abs(value))}`;
+                    }}
+                    width={70}
                   />
                   <Tooltip 
                     formatter={barTooltipFormatter}
                     labelStyle={{ color: 'var(--foreground)' }}
                   />
-                  <Bar dataKey="Income" fill={barColors.income} minPointSize={20} />
-                  <Bar dataKey="Expenses" fill={barColors.expense} minPointSize={20} />
+                  <Bar 
+                    dataKey="Income" 
+                    fill={barColors.income} 
+                    minPointSize={20}
+                    name={t('dashboard.income')}
+                  />
+                  <Bar 
+                    dataKey="Expenses" 
+                    fill={barColors.expense} 
+                    minPointSize={20}
+                    name={t('dashboard.expenses')}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}

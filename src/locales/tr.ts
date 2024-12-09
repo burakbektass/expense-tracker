@@ -169,7 +169,9 @@ export const tr = {
       bills: '📃 Faturalar',
       healthcare: '🏥 Sağlık',
       education: '📚 Eğitim',
-    }
+    },
+    deleteAllTitle: 'Tüm Kategorileri Sil',
+    deleteAllConfirm: 'Tüm kategorileri ve ilişkili işlemleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
   },
   defaultCategories: {
     groceries: 'Market',
