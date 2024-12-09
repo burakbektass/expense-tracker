@@ -90,6 +90,9 @@ export const en = {
       maxCharacterLimit: 'Maximum character limit reached',
       descriptionMax: 'Description must be less than 64 characters',
     },
+    deleteAll: 'Delete All',
+    deleteAllTitle: 'Delete All Transactions',
+    deleteAllConfirm: 'Are you sure you want to delete all transactions? This action cannot be undone.',
   },
   categories: {
     title: 'Categories',
@@ -168,4 +171,18 @@ export const en = {
       education: '📚 Education',
     },
   },
+  defaultCategories: {
+    groceries: 'Groceries',
+    rent: 'Rent',
+    utilities: 'Utilities',
+    transportation: 'Transportation',
+    entertainment: 'Entertainment',
+    healthcare: 'Healthcare',
+    education: 'Education',
+    shopping: 'Shopping',
+    travel: 'Travel',
+    salary: 'Salary',
+    investment: 'Investment',
+    other: 'Other'
+  }
 }; 

@@ -8,7 +8,7 @@ import { formatMoney } from '@/lib/formatUtils';
 import { TransactionTable } from './components/TransactionTable';
 import { useLanguage } from '@/context/LanguageContext';
 export default function Transactions() {
-  const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
+  const { transactions, addTransaction, deleteTransaction, setTransactions, isLoading } = useTransactions();
   const { categories } = useCategories();
   const { currency, convertAmount } = useCurrency();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -25,6 +25,7 @@ export default function Transactions() {
     amount: '',
     categoryId: ''
   });
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -117,6 +118,17 @@ export default function Transactions() {
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             {t('transactions.addTransaction')}
+          </button>
+          <button
+            onClick={() => setShowDeleteAllModal(true)}
+            className={`px-4 py-2 bg-red-500 text-white rounded-lg transition-colors
+              ${transactions.length === 0 
+                ? 'opacity-50 cursor-not-allowed hover:bg-red-500 pointer-events-none' 
+                : 'hover:bg-red-600'
+              }`}
+            disabled={transactions.length === 0}
+          >
+            {t('transactions.deleteAll')}
           </button>
         </div>
       </div>
@@ -254,6 +266,32 @@ export default function Transactions() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteAllModal && (
+        <div className="modal-container">
+          <div className="modal-content">
+            <h2 className="text-2xl font-bold mb-4">{t('transactions.deleteAllTitle')}</h2>
+            <p className="mb-4">{t('transactions.deleteAllConfirm')}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteAllModal(false)}
+                className="button-secondary"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => {
+                  setTransactions([]);
+                  setShowDeleteAllModal(false);
+                }}
+                className="button-danger"
+              >
+                {t('common.delete')}
+              </button>
+            </div>
           </div>
         </div>
       )}

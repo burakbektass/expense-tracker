@@ -90,6 +90,9 @@ export const tr = {
       maxCharacterLimit: 'Maksimum karakter sınırına ulaşıldı',
       descriptionMax: 'Açıklama 64 karakterden az olmalıdır',
     },
+    deleteAll: 'Tümünü Sil',
+    deleteAllTitle: 'Tüm İşlemleri Sil',
+    deleteAllConfirm: 'Tüm işlemleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
   },
   categories: {
     title: 'Kategoriler',
@@ -167,5 +170,19 @@ export const tr = {
       healthcare: '🏥 Sağlık',
       education: '📚 Eğitim',
     }
+  },
+  defaultCategories: {
+    groceries: 'Market',
+    rent: 'Kira',
+    utilities: 'Faturalar',
+    transportation: 'Ulaşım',
+    entertainment: 'Eğlence',
+    healthcare: 'Sağlık',
+    education: 'Eğitim',
+    shopping: 'Alışveriş',
+    travel: 'Seyahat',
+    salary: 'Maaş',
+    investment: 'Yatırım',
+    other: 'Diğer'
   }
 } 
