@@ -24,7 +24,7 @@ export default function Dashboard() {
   const { currency, convertAmount } = useCurrency();
   const [showPieAsTable, setShowPieAsTable] = useState(false);
   const [showBarAsTable, setShowBarAsTable] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">Loading...</div>;
   }
@@ -49,7 +49,7 @@ export default function Dashboard() {
   // Prepare data for bar chart (monthly trends)
   const monthlyData = transactions.reduce<Record<string, MonthlyData>>((acc, transaction) => {
     const date = new Date(transaction.date);
-    const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+    const monthYear = `${date.toLocaleString(language.code, { month: 'short' })} ${date.getFullYear()}`;
     
     if (!acc[monthYear]) {
       acc[monthYear] = { income: 0, expense: 0 };
