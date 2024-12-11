@@ -35,6 +35,7 @@ export function TransactionTable({
   transactions, 
   categories, 
   currency, 
+  currencies,
   convertAmount, 
   onDelete 
 }) {
@@ -149,11 +150,13 @@ export function TransactionTable({
                     </span>
                   </td>
                   <td className={`p-4 text-right ${transaction.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                    {currency.symbol}
-                    {formatMoney(
-                      transaction.currency === currency.code
-                        ? Math.abs(transaction.amount)
-                        : convertAmount(Math.abs(transaction.amount), transaction.currency)
+                    {currencies.find(c => c.code === transaction.currency)?.symbol || currency.symbol}
+                    {formatMoney(Math.abs(transaction.amount))}
+                    {transaction.currency !== currency.code && (
+                      <span className="text-xs text-gray-500 ml-1">
+                        ({currency.symbol}
+                        {formatMoney(convertAmount(Math.abs(transaction.amount), transaction.currency))})
+                      </span>
                     )}
                   </td>
                   <td className="p-4 text-center">

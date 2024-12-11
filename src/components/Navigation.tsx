@@ -3,12 +3,10 @@
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
-import { useCurrency } from '@/context/CurrencyContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navigation() {
     const { theme, toggleTheme } = useTheme();
-    const { currency, setCurrency, currencies } = useCurrency();
     const { language, setLanguage, languages, t } = useLanguage();
   
     const navItems = [
@@ -44,24 +42,6 @@ export default function Navigation() {
             <span>{theme === 'light' ? '🌙' : '☀️'}</span>
             <span>{theme === 'light' ? t('navigation.darkMode') : t('navigation.lightMode')}</span>
           </button>
-
-          <div className="hidden md:block">
-            <label className="block text-sm mb-2">{t('navigation.currency')}</label>
-            <select
-              value={currency.code}
-              onChange={(e) => {
-                const selected = currencies.find(c => c.code === e.target.value);
-                if (selected) setCurrency(selected);
-              }}
-              className="w-full px-4 py-2 rounded-lg bg-background border border-border select-field"
-            >
-              {currencies.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.symbol} - {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
 
           <div className="hidden md:block">
             <label className="block text-sm mb-2">{t('navigation.language')}</label>

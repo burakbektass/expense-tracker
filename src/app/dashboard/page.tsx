@@ -25,6 +25,8 @@ export default function Dashboard() {
   const [showPieAsTable, setShowPieAsTable] = useState(false);
   const [showBarAsTable, setShowBarAsTable] = useState(false);
   const { t, language } = useLanguage();
+  const [chartType, setChartType] = useState<'expense' | 'income'>('expense');
+
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">Loading...</div>;
   }
@@ -33,6 +35,21 @@ export default function Dashboard() {
   const totalIncome = categoryTotals.reduce((sum, cat) => sum + cat.totalIncome, 0);
   const totalExpense = categoryTotals.reduce((sum, cat) => sum + cat.totalExpense, 0);
   const balance = totalIncome - totalExpense;
+
+  // Prepare data for pie charts
+  const expensePieData = categoryTotals
+    .filter(cat => cat.totalExpense > 0)
+    .map(cat => ({
+      name: cat.name,
+      value: convertAmount(cat.totalExpense)
+    }));
+
+  const incomePieData = categoryTotals
+    .filter(cat => cat.totalIncome > 0)
+    .map(cat => ({
+      name: cat.name,
+      value: convertAmount(cat.totalIncome)
+    }));
 
   // Prepare data for pie chart (expense distribution)
   const pieChartData = categoryTotals
@@ -55,11 +72,11 @@ export default function Dashboard() {
       acc[monthYear] = { income: 0, expense: 0 };
     }
     
-    const convertedAmount = convertAmount(transaction.amount);
+    const convertedAmount = convertAmount(Math.abs(transaction.amount), transaction.currency);
     if (transaction.type === 'income') {
       acc[monthYear].income += convertedAmount;
     } else {
-      acc[monthYear].expense += convertedAmount;
+      acc[monthYear].expense += Math.abs(convertedAmount);
     }
     
     return acc;
@@ -70,6 +87,15 @@ export default function Dashboard() {
     Income: Math.abs(data.income),
     Expenses: Math.abs(data.expense)
   }));
+
+  // Convert barChartData array to Record format for TrendTable
+  const trendTableData = barChartData.reduce((acc, item) => {
+    acc[item.month] = {
+      income: item.Income,
+      expense: item.Expenses
+    };
+    return acc;
+  }, {} as Record<string, MonthlyData>);
 
   // Custom tooltip formatter for the bar chart
   const barTooltipFormatter = (value: number) => {
@@ -233,7 +259,7 @@ export default function Dashboard() {
               </div>
             ) : showBarAsTable ? (
               <TrendTable 
-                data={barChartData} 
+                data={trendTableData} 
                 currency={currency} 
                 formatMoney={formatMoney} 
               />

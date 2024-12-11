@@ -177,6 +177,7 @@ export const tr = {
       exceeded: 'Bütçe {amount} kadar aşıldı',
       approaching: 'Bütçe limitine yaklaşılıyor ({percent}% kullanıldı)',
     },
+    deleteConfirm: 'Bu kategoriyi silmek istediğinizden emin misiniz ?',
   },
   defaultCategories: {
     groceries: 'Market',

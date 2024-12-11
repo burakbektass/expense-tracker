@@ -1,27 +1,50 @@
 import { useLanguage } from '@/context/LanguageContext';
 
-export function TrendTable({ data, currency, formatMoney }) {
+type MonthlyData = {
+  income: number;
+  expense: number;
+};
+
+export function TrendTable({ 
+  data, 
+  currency, 
+  formatMoney 
+}: { 
+  data: Record<string, MonthlyData>;
+  currency: { symbol: string };
+  formatMoney: (value: number) => string;
+}) {
   const { t } = useLanguage();
   
+  const sortedMonths = Object.entries(data).sort((a, b) => {
+    const dateA = new Date(a[0]);
+    const dateB = new Date(b[0]);
+    return dateB.getTime() - dateA.getTime();
+  });
+
   return (
     <div className="overflow-auto max-h-[400px]">
       <table className="w-full">
         <thead>
-          <tr>
-            <th className="text-left p-2">{t('dashboard.month')}</th>
-            <th className="text-right p-2">{t('dashboard.income')}</th>
-            <th className="text-right p-2">{t('dashboard.expenses')}</th>
+          <tr className="border-b border-border">
+            <th className="p-4 text-left">{t('dashboard.month')}</th>
+            <th className="p-4 text-right">{t('dashboard.income')}</th>
+            <th className="p-4 text-right">{t('dashboard.expenses')}</th>
+            <th className="p-4 text-right">{t('categories.balance')}</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.month} className="border-t border-border">
-              <td className="p-2">{item.month}</td>
-              <td className="text-right text-green-500 p-2">
-                {currency.symbol}{formatMoney(item.income)}
+          {sortedMonths.map(([month, values]) => (
+            <tr key={month} className="border-b border-border">
+              <td className="p-4">{month}</td>
+              <td className="p-4 text-right text-green-500">
+                {currency.symbol}{formatMoney(values.income)}
               </td>
-              <td className="text-right text-red-500 p-2">
-                {currency.symbol}{formatMoney(item.expense)}
+              <td className="p-4 text-right text-red-500">
+                {currency.symbol}{formatMoney(values.expense)}
+              </td>
+              <td className="p-4 text-right">
+                {currency.symbol}{formatMoney(values.income - values.expense)}
               </td>
             </tr>
           ))}

@@ -177,6 +177,7 @@ export const en = {
       exceeded: 'Budget exceeded by {amount}',
       approaching: 'Approaching budget limit ({percent}% used)',
     },
+    deleteConfirm: 'Are you sure you want to delete this category ?',
   },
   defaultCategories: {
     groceries: 'Groceries',

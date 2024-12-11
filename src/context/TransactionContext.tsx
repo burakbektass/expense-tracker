@@ -50,10 +50,10 @@ export function TransactionProvider({ children }) {
       ...transaction,
       id: Date.now().toString(),
       date: new Date().toISOString(),
-      currency: currency.code,
-      amount: Number(transaction.amount) * (transaction.type === 'expense' ? -1 : 1)
+      amount: Number(transaction.amount) * (transaction.type === 'expense' ? -1 : 1),
+      currency: transaction.currency
     };
-    setTransactions([newTransaction, ...transactions]);
+    setTransactions(prev => [newTransaction, ...prev]);
   };
 
   const deleteTransaction = (id: string) => {

@@ -32,6 +32,7 @@ type SortDirection = 'asc' | 'desc' | 'none';
 
 export function CategoryTable({
   categories,
+  transactions,
   currency,
   convertAmount,
   onDelete,
@@ -65,12 +66,34 @@ export function CategoryTable({
         const budgetB = b.budget ? convertAmount(b.budget) : 0;
         return multiplier * (budgetA - budgetB);
       case 'income':
-        return multiplier * (convertAmount(a.totalIncome) - convertAmount(b.totalIncome));
+        const incomeA = transactions
+          .filter(t => t.categoryId === a.id && t.type === 'income')
+          .reduce((sum, t) => sum + convertAmount(Math.abs(t.amount), t.currency), 0);
+        const incomeB = transactions
+          .filter(t => t.categoryId === b.id && t.type === 'income')
+          .reduce((sum, t) => sum + convertAmount(Math.abs(t.amount), t.currency), 0);
+        return multiplier * (incomeA - incomeB);
       case 'expense':
-        return multiplier * (convertAmount(a.totalExpense) - convertAmount(b.totalExpense));
+        const expenseA = transactions
+          .filter(t => t.categoryId === a.id && t.type === 'expense')
+          .reduce((sum, t) => sum + convertAmount(Math.abs(t.amount), t.currency), 0);
+        const expenseB = transactions
+          .filter(t => t.categoryId === b.id && t.type === 'expense')
+          .reduce((sum, t) => sum + convertAmount(Math.abs(t.amount), t.currency), 0);
+        return multiplier * (expenseA - expenseB);
       case 'balance':
-        const balanceA = convertAmount(a.totalIncome - a.totalExpense);
-        const balanceB = convertAmount(b.totalIncome - b.totalExpense);
+        const balanceA = transactions
+          .filter(t => t.categoryId === a.id)
+          .reduce((sum, t) => {
+            const amount = convertAmount(Math.abs(t.amount), t.currency);
+            return sum + (t.type === 'income' ? amount : -amount);
+          }, 0);
+        const balanceB = transactions
+          .filter(t => t.categoryId === b.id)
+          .reduce((sum, t) => {
+            const amount = convertAmount(Math.abs(t.amount), t.currency);
+            return sum + (t.type === 'income' ? amount : -amount);
+          }, 0);
         return multiplier * (balanceA - balanceB);
       default:
         return multiplier * a.name.localeCompare(b.name);
@@ -189,16 +212,29 @@ export function CategoryTable({
               </td>
               <td className="p-4 text-right text-green-500">
                 {currency.symbol}
-                {formatMoney(convertAmount(category.totalIncome))}
+                {formatMoney(
+                  transactions
+                    .filter(t => t.categoryId === category.id && t.type === 'income')
+                    .reduce((sum, t) => sum + convertAmount(t.amount, t.currency), 0)
+                )}
               </td>
               <td className="p-4 text-right text-red-500">
                 {currency.symbol}
-                {formatMoney(convertAmount(category.totalExpense))}
+                {formatMoney(
+                  transactions
+                    .filter(t => t.categoryId === category.id && t.type === 'expense')
+                    .reduce((sum, t) => sum + convertAmount(Math.abs(t.amount), t.currency), 0)
+                )}
               </td>
               <td className="p-4 text-right font-medium">
                 {currency.symbol}
                 {formatMoney(
-                  convertAmount(category.totalIncome - category.totalExpense)
+                  transactions
+                    .filter(t => t.categoryId === category.id)
+                    .reduce((sum, t) => {
+                      const amount = convertAmount(Math.abs(t.amount), t.currency);
+                      return sum + (t.type === 'income' ? amount : -amount);
+                    }, 0)
                 )}
               </td>
               <td className="p-4">
@@ -210,7 +246,10 @@ export function CategoryTable({
                     ✏️
                   </button>
                   <button
-                    onClick={() => onDelete(category.id)}
+                    onClick={() => {
+                      const hasTransactions = transactions.some(t => t.categoryId === category.id);
+                      onDelete(category.id, true, hasTransactions);
+                    }}
                     className="text-red-500 hover:text-red-600 transition-colors"
                   >
                     🗑️

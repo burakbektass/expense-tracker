@@ -10,13 +10,14 @@ import { useLanguage } from '@/context/LanguageContext';
 export default function Transactions() {
   const { transactions, addTransaction, deleteTransaction, setTransactions, isLoading } = useTransactions();
   const { categories } = useCategories();
-  const { currency, convertAmount } = useCurrency();
+  const { currency, convertAmount, currencies } = useCurrency();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTransaction, setNewTransaction] = useState({
     description: '',
     amount: '',
     type: 'expense' as 'income' | 'expense',
     categoryId: '',
+    currency: currency.code
   });
   const [searchQuery, setSearchQuery] = useState('');
   const { t } = useLanguage();
@@ -74,24 +75,22 @@ export default function Transactions() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     addTransaction({
       description: newTransaction.description,
       amount: Number(newTransaction.amount),
       type: newTransaction.type,
       categoryId: newTransaction.categoryId,
-      currency: currency.code
+      currency: newTransaction.currency
     });
-    
+
     setNewTransaction({
       description: '',
       amount: '',
       type: 'expense',
       categoryId: '',
+      currency: currency.code
     });
     setShowAddModal(false);
   };
@@ -138,6 +137,7 @@ export default function Transactions() {
           transactions={filteredTransactions}
           categories={categories}
           currency={currency}
+          currencies={currencies}
           convertAmount={convertAmount}
           onDelete={deleteTransaction}
         />
@@ -182,28 +182,45 @@ export default function Transactions() {
                 )}
               </div>
 
-              <div>
-                <label className="block mb-2">{t('transactions.amount')}</label>
-                <input
-                  type="number"
-                  value={newTransaction.amount}
-                  onChange={(e) => {
-                    setNewTransaction({ ...newTransaction, amount: e.target.value });
-                    if (errors.amount) {
-                      setErrors({ ...errors, amount: '' });
-                    }
-                  }}
-                  className={`w-full p-2 rounded-lg border ${
-                    errors.amount ? 'border-red-500' : 'border-border'
-                  } bg-background`}
-                  placeholder={t('transactions.amountPlaceholder')}
-                  step="0.01"
-                  min="0"
-                  max="1000000000"
-                />
-                {errors.amount && (
-                  <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-                )}
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block mb-2">{t('transactions.amount')}</label>
+                  <input
+                    type="number"
+                    value={newTransaction.amount}
+                    onChange={(e) => {
+                      setNewTransaction({ ...newTransaction, amount: e.target.value });
+                      if (errors.amount) {
+                        setErrors({ ...errors, amount: '' });
+                      }
+                    }}
+                    className={`w-full p-2 rounded-lg border ${
+                      errors.amount ? 'border-red-500' : 'border-border'
+                    } bg-background`}
+                    placeholder={t('transactions.amountPlaceholder')}
+                    step="0.01"
+                    min="0"
+                    max="1000000000"
+                  />
+                  {errors.amount && (
+                    <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+                  )}
+                </div>
+                
+                <div className="w-32">
+                  <label className="block mb-2">{t('navigation.currency')}</label>
+                  <select
+                    value={newTransaction.currency}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, currency: e.target.value })}
+                    className="select-field"
+                  >
+                    {currencies.map((curr) => (
+                      <option key={curr.code} value={curr.code}>
+                        {curr.code} ({curr.symbol})
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>

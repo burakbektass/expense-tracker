@@ -34,47 +34,38 @@ type CategoryContextType = {
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
 export function CategoryProvider({ children }) {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(() => {
+    const savedCategories = localStorage.getItem('categories');
+    const { t } = useLanguage();
+
+    if (savedCategories) {
+      return JSON.parse(savedCategories);
+    }
+    
+    // Only add default categories if there are no saved categories
+    const defaultCategories = [
+      { id: '1', name: t('defaultCategories.groceries'), icon: '🛒', budget: null },
+      { id: '2', name: t('defaultCategories.rent'), icon: '🏠', budget: null },
+      { id: '3', name: t('defaultCategories.utilities'), icon: '💡', budget: null },
+      { id: '4', name: t('defaultCategories.transportation'), icon: '🚗', budget: null },
+      { id: '5', name: t('defaultCategories.entertainment'), icon: '🎮', budget: null },
+      { id: '6', name: t('defaultCategories.healthcare'), icon: '🏥', budget: null },
+      { id: '7', name: t('defaultCategories.education'), icon: '📚', budget: null },
+      { id: '8', name: t('defaultCategories.shopping'), icon: '🛍️', budget: null },
+      { id: '9', name: t('defaultCategories.salary'), icon: '💰', budget: null },
+      { id: '10', name: t('defaultCategories.investment'), icon: '📈', budget: null },
+    ];
+    
+    localStorage.setItem('categories', JSON.stringify(defaultCategories));
+    return defaultCategories;
+  });
+
   const [isLoading, setIsLoading] = useState(true);
-  const { t } = useLanguage();
   const { currency, convertAmount, formatAmount } = useCurrency();
 
   useEffect(() => {
-    const defaultCategories = [
-      { id: 'groceries', name: t('defaultCategories.groceries'), icon: '🛒', budget: 200 },
-      { id: 'rent', name: t('defaultCategories.rent'), icon: '🏠', budget: 1000 },
-      { id: 'utilities', name: t('defaultCategories.utilities'), icon: '💡', budget: null },
-      { id: 'transportation', name: t('defaultCategories.transportation'), icon: '🚗', budget: 250 },
-      { id: 'entertainment', name: t('defaultCategories.entertainment'), icon: '🎮', budget: 500 },
-      { id: 'healthcare', name: t('defaultCategories.healthcare'), icon: '🏥', budget: 650 },
-      { id: 'education', name: t('defaultCategories.education'), icon: '📚', budget: 1100 },
-      { id: 'shopping', name: t('defaultCategories.shopping'), icon: '🛍️', budget: 2000 },
-      { id: 'travel', name: t('defaultCategories.travel'), icon: '✈️', budget: null },
-      { id: 'salary', name: t('defaultCategories.salary'), icon: '💰', budget: null },
-      { id: 'investment', name: t('defaultCategories.investment'), icon: '📈', budget: 3000 },
-      { id: 'other', name: t('defaultCategories.other'), icon: '📦', budget: null }
-    ];
-
-    if (categories.length === 0) {
-      setCategories(defaultCategories);
-    } else {
-      setCategories(prevCategories => 
-        prevCategories.map(category => {
-          const defaultCategory = defaultCategories.find(dc => dc.id === category.id);
-          if (defaultCategory) {
-            return { ...category, name: defaultCategory.name };
-          }
-          return category;
-        })
-      );
-    }
-  }, [t]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem('categories', JSON.stringify(categories));
-    }
-  }, [categories, isLoading]);
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
 
   const hasReachedLimit = categories.length >= MAX_CATEGORIES;
 
@@ -97,37 +88,26 @@ export function CategoryProvider({ children }) {
       const totalIncome = categoryTransactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => {
-          const amount = t.currency === currency.code 
+          const convertedAmount = t.currency === currency.code 
             ? t.amount 
             : convertAmount(t.amount, t.currency);
-          return sum + amount;
+          return sum + Math.abs(convertedAmount);
         }, 0);
       
       const totalExpense = categoryTransactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => {
-          const amount = t.currency === currency.code 
-            ? Math.abs(t.amount) 
-            : convertAmount(Math.abs(t.amount), t.currency);
-          return sum + amount;
+          const convertedAmount = t.currency === currency.code 
+            ? t.amount 
+            : convertAmount(t.amount, t.currency);
+          return sum + Math.abs(convertedAmount);
         }, 0);
-
-      let budgetWarning: string | null = null;
-      if (category.budget) {
-        const usagePercent = Math.round((totalExpense / category.budget) * 100);
-        if (totalExpense > category.budget) {
-          const exceededAmount = formatAmount(totalExpense - category.budget);
-          budgetWarning = t('categories.budgetWarnings.exceeded').replace('{amount}', exceededAmount);
-        } else if (totalExpense >= category.budget * 0.8) {
-          budgetWarning = t('categories.budgetWarnings.approaching').replace('{percent}', usagePercent.toString());
-        }
-      }
 
       return {
         ...category,
         totalIncome,
         totalExpense,
-        budgetWarning
+        budgetWarning: null
       };
     });
   };

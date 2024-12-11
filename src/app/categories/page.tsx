@@ -26,13 +26,14 @@ export default function Categories() {
   const [showDeleteModal, setShowDeleteModal] = useState<{
     show: boolean;
     categoryId: string;
-  }>({ show: false, categoryId: "" });
+    hasTransactions: boolean;
+  }>({ show: false, categoryId: "", hasTransactions: false });
   const [newCategory, setNewCategory] = useState({
     name: "",
     icon: "📦",
     budget: null as number | null,
   });
-  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+  const [viewMode, setViewMode] = useState<"card" | "table">("table");
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<{
     id: string;
@@ -84,13 +85,9 @@ export default function Categories() {
     setShowAddModal(false);
   };
 
-  const handleDeleteClick = (categoryId: string) => {
-    const transactionCount = getCategoryTransactionCount(
-      transactions,
-      categoryId
-    );
-    if (transactionCount > 0) {
-      setShowDeleteModal({ show: true, categoryId });
+  const handleDeleteCategory = (categoryId: string, showModal: boolean, hasTransactions: boolean) => {
+    if (showModal) {
+      setShowDeleteModal({ show: true, categoryId, hasTransactions });
     } else {
       deleteCategory(categoryId);
     }
@@ -100,7 +97,7 @@ export default function Categories() {
     deleteCategory(showDeleteModal.categoryId, true, (categoryId) => {
       deleteTransactionsByCategory(categoryId);
     });
-    setShowDeleteModal({ show: false, categoryId: "" });
+    setShowDeleteModal({ show: false, categoryId: "", hasTransactions: false });
   };
 
   const handleEditClick = (category) => {
@@ -206,10 +203,11 @@ export default function Categories() {
       {viewMode === "table" ? (
         <div className="rounded-2xl border border-border overflow-hidden">
           <CategoryTable
-            categories={filteredCategories}
+            categories={categories}
+            transactions={transactions}
             currency={currency}
             convertAmount={convertAmount}
-            onDelete={handleDeleteClick}
+            onDelete={handleDeleteCategory}
             onEdit={handleEditClick}
           />
         </div>
@@ -254,7 +252,7 @@ export default function Categories() {
                     ✏️
                   </button>
                   <button
-                    onClick={() => handleDeleteClick(category.id)}
+                    onClick={() => handleDeleteCategory(category.id, true, transactions.some(t => t.categoryId === category.id))}
                     className="text-red-500 hover:text-red-600"
                   >
                     🗑️
@@ -294,12 +292,14 @@ export default function Categories() {
           <div className="modal-content">
             <h2 className="text-2xl font-bold mb-4">{t('categories.deleteCategory')}</h2>
             <p className="mb-4">
-              {t('categories.deleteWarning')}
+              {showDeleteModal.hasTransactions 
+                ? t('categories.deleteWarning')
+                : t('categories.deleteConfirm')}
             </p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() =>
-                  setShowDeleteModal({ show: false, categoryId: "" })
+                  setShowDeleteModal({ show: false, categoryId: "", hasTransactions: false })
                 }
                 className="px-4 py-2 border border-border rounded-lg"
               >
