@@ -1,6 +1,6 @@
 import { formatMoney } from "@/lib/formatUtils";
 import { useState } from 'react';
-
+import { useLanguage } from '@/context/LanguageContext';
 const SortIcon = ({ active, direction }) => {
   if (!active) {
     return (
@@ -39,7 +39,7 @@ export function CategoryTable({
 }) {
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('none');
-
+  const { t } = useLanguage();
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       if (sortDirection === 'asc') {
@@ -82,14 +82,16 @@ export function CategoryTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-border">
-            <th className="p-4 text-left" style={{ width: '20%' }}>Category</th>
+            <th className="p-4 text-left" style={{ width: '20%' }}>
+              {t('categories.table.category')}
+            </th>
             <th 
               className="p-4 text-right pr-10 cursor-pointer hover:bg-foreground/5" 
               style={{ width: '20%' }}
               onClick={() => handleSort('budget')}
             >
               <div className="flex items-center justify-end">
-                Budget
+                {t('categories.table.budget')}
                 <SortIcon 
                   active={sortField === 'budget'} 
                   direction={sortField === 'budget' ? sortDirection : 'none'} 
@@ -102,7 +104,7 @@ export function CategoryTable({
               onClick={() => handleSort('income')}
             >
               <div className="flex items-center justify-end">
-                Income
+                {t('categories.table.income')}
                 <SortIcon 
                   active={sortField === 'income'} 
                   direction={sortField === 'income' ? sortDirection : 'none'} 
@@ -115,7 +117,7 @@ export function CategoryTable({
               onClick={() => handleSort('expense')}
             >
               <div className="flex items-center justify-end">
-                Expenses
+                {t('categories.table.expenses')}
                 <SortIcon 
                   active={sortField === 'expense'} 
                   direction={sortField === 'expense' ? sortDirection : 'none'} 
@@ -128,14 +130,16 @@ export function CategoryTable({
               onClick={() => handleSort('balance')}
             >
               <div className="flex items-center justify-end">
-                Balance
+                {t('categories.table.balance')}
                 <SortIcon 
                   active={sortField === 'balance'} 
                   direction={sortField === 'balance' ? sortDirection : 'none'} 
                 />
               </div>
             </th>
-            <th className="p-4 text-center" style={{ width: '15%' }}>Actions</th>
+            <th className="p-4 text-center" style={{ width: '15%' }}>
+              {t('categories.table.actions')}
+            </th>
           </tr>
         </thead>
         <tbody>

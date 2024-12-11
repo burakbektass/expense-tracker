@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useCurrency } from './CurrencyContext';
 
-type Transaction = {
+export type Transaction = {
   id: string;
   description: string;
   amount: number;
@@ -25,6 +26,7 @@ const TransactionContext = createContext<TransactionContextType | undefined>(und
 
 export function TransactionProvider({ children }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { currency } = useCurrency();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -48,7 +50,8 @@ export function TransactionProvider({ children }) {
       ...transaction,
       id: Date.now().toString(),
       date: new Date().toISOString(),
-      currency: transaction.currency
+      currency: currency.code,
+      amount: Number(transaction.amount) * (transaction.type === 'expense' ? -1 : 1)
     };
     setTransactions([newTransaction, ...transactions]);
   };

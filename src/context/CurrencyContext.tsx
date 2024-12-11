@@ -18,6 +18,7 @@ type CurrencyContextType = {
   currencies: CurrencyOption[];
   convertAmount: (amount: number, fromCurrency?: string) => number;
   isLoading: boolean;
+  formatAmount: (amount: number) => string;
 };
 
 const currencies: CurrencyOption[] = [
@@ -103,7 +104,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       setCurrency, 
       currencies, 
       convertAmount,
-      isLoading 
+      isLoading,
+      formatAmount: (amount: number) => `$${amount.toFixed(2)}`
     }}>
       {isLoading ? (
         <div className="flex items-center justify-center min-h-screen">

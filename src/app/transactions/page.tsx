@@ -6,9 +6,9 @@ import { useCategories } from '@/context/CategoryContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatMoney } from '@/lib/formatUtils';
 import { TransactionTable } from './components/TransactionTable';
-
+import { useLanguage } from '@/context/LanguageContext';
 export default function Transactions() {
-  const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
+  const { transactions, addTransaction, deleteTransaction, setTransactions, isLoading } = useTransactions();
   const { categories } = useCategories();
   const { currency, convertAmount } = useCurrency();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -19,11 +19,13 @@ export default function Transactions() {
     categoryId: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useLanguage();
   const [errors, setErrors] = useState({
     description: '',
     amount: '',
     categoryId: ''
   });
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -42,22 +44,22 @@ export default function Transactions() {
 
     // Description validation
     if (!newTransaction.description) {
-      newErrors.description = 'Description is required';
+      newErrors.description = t('transactions.validation.descriptionRequired');
     } else if (newTransaction.description.length < 3) {
-      newErrors.description = 'Description must be at least 3 characters';
+      newErrors.description = t('transactions.validation.descriptionLength');
     } else if (newTransaction.description.length > 64) {
-      newErrors.description = 'Description must be less than 64 characters';
+      newErrors.description = t('transactions.validation.descriptionMax');
     }
 
     // Amount validation
     if (!newTransaction.amount) {
-      newErrors.amount = 'Amount is required';
+      newErrors.amount = t('transactions.validation.amountRequired');
     } else {
       const amountValue = Number(newTransaction.amount);
       if (amountValue <= 0) {
-        newErrors.amount = 'Amount must be greater than 0';
+        newErrors.amount = t('transactions.validation.amountPositive');
       } else if (amountValue > 1000000000) {
-        newErrors.amount = 'Amount cannot exceed 1,000,000,000';
+        newErrors.amount = t('transactions.validation.amountMax');
       }
     }
 
@@ -97,12 +99,12 @@ export default function Transactions() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center gap-4">
-        <h1 className="text-4xl font-bold">Transactions</h1>
+        <h1 className="text-4xl font-bold">{t('transactions.title')}</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search by description..."
+              placeholder={t('transactions.searchTransactions')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="px-4 py-2 pr-10 rounded-lg border border-border bg-background"
@@ -115,7 +117,18 @@ export default function Transactions() {
             onClick={() => setShowAddModal(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
-            Add Transaction
+            {t('transactions.addTransaction')}
+          </button>
+          <button
+            onClick={() => setShowDeleteAllModal(true)}
+            className={`px-4 py-2 bg-red-500 text-white rounded-lg transition-colors
+              ${transactions.length === 0 
+                ? 'opacity-50 cursor-not-allowed hover:bg-red-500 pointer-events-none' 
+                : 'hover:bg-red-600'
+              }`}
+            disabled={transactions.length === 0}
+          >
+            {t('transactions.deleteAll')}
           </button>
         </div>
       </div>
@@ -133,10 +146,10 @@ export default function Transactions() {
       {showAddModal && (
         <div className="modal-container">
           <div className="modal-content">
-            <h2 className="text-2xl font-bold mb-4">Add New Transaction</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('transactions.addNewTransaction')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block mb-2">Description</label>
+                <label className="block mb-2">{t('transactions.description')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -150,7 +163,7 @@ export default function Transactions() {
                     className={`w-full p-2 pr-16 rounded-lg border ${
                       errors.description ? 'border-red-500' : 'border-border'
                     } bg-background`}
-                    placeholder="Enter description"
+                    placeholder={t('transactions.descriptionPlaceholder')}
                     maxLength={64}
                   />
                   <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-sm ${
@@ -164,13 +177,13 @@ export default function Transactions() {
                 )}
                 {newTransaction.description.length >= 64 && (
                   <p className="text-yellow-500 text-sm mt-1">
-                    ⚠️ Maximum character limit reached
+                    ⚠️ {t('transactions.validation.maxCharacterLimit')}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block mb-2">Amount</label>
+                <label className="block mb-2">{t('transactions.amount')}</label>
                 <input
                   type="number"
                   value={newTransaction.amount}
@@ -183,7 +196,7 @@ export default function Transactions() {
                   className={`w-full p-2 rounded-lg border ${
                     errors.amount ? 'border-red-500' : 'border-border'
                   } bg-background`}
-                  placeholder="Enter amount"
+                  placeholder={t('transactions.amountPlaceholder')}
                   step="0.01"
                   min="0"
                   max="1000000000"
@@ -194,7 +207,7 @@ export default function Transactions() {
               </div>
 
               <div>
-                <label className="block mb-2">Type</label>
+                <label className="block mb-2">{t('transactions.type')}</label>
                 <select
                   value={newTransaction.type}
                   onChange={(e) => setNewTransaction({ 
@@ -203,13 +216,13 @@ export default function Transactions() {
                   })}
                   className="select-field"
                 >
-                  <option value="expense">Expense</option>
-                  <option value="income">Income</option>
+                  <option value="expense">{t('transactions.expense')}</option>
+                  <option value="income">{t('transactions.income')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block mb-2">Category</label>
+                <label className="block mb-2">{t('transactions.category')}</label>
                 <select
                   value={newTransaction.categoryId}
                   onChange={(e) => {
@@ -222,7 +235,7 @@ export default function Transactions() {
                     errors.categoryId ? 'border-red-500' : ''
                   }`}
                 >
-                  <option value="">Select a category</option>
+                  <option value="">{t('transactions.selectCategory')}</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.icon} {category.name}
@@ -243,16 +256,42 @@ export default function Transactions() {
                   }}
                   className="px-4 py-2 border border-border rounded-lg"
                 >
-                  Cancel
+                  {t('transactions.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
-                  Add Transaction
+                  {t('transactions.addTransaction')}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteAllModal && (
+        <div className="modal-container">
+          <div className="modal-content">
+            <h2 className="text-2xl font-bold mb-4">{t('transactions.deleteAllTitle')}</h2>
+            <p className="mb-4">{t('transactions.deleteAllConfirm')}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteAllModal(false)}
+                className="button-secondary"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => {
+                  setTransactions([]);
+                  setShowDeleteAllModal(false);
+                }}
+                className="button-danger"
+              >
+                {t('common.delete')}
+              </button>
+            </div>
           </div>
         </div>
       )}

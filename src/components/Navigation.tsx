@@ -9,21 +9,23 @@ import { useLanguage } from '@/context/LanguageContext';
 export default function Navigation() {
     const { theme, toggleTheme } = useTheme();
     const { currency, setCurrency, currencies } = useCurrency();
-    const { language, setLanguage, languages } = useLanguage();
+    const { language, setLanguage, languages, t } = useLanguage();
+  
+    const navItems = [
+      { href: '/dashboard', label: t('navigation.dashboard'), icon: '📊' },
+      { href: '/transactions', label: t('navigation.transactions'), icon: '💳' },
+      { href: '/categories', label: t('navigation.categories'), icon: '🏷️' },
+    ];
   
     return (
       <nav className="nav-sidebar md:fixed md:left-0 md:top-0 md:h-screen md:w-64 bg-background-10 backdrop-blur-xl border-r border-border p-6">
         <div className="nav-content flex flex-col gap-8">
           <div className="hidden md:block text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-            ExpenseTracker
+            {t('common.appName')}
           </div>
           
           <div className="flex md:flex-col gap-2">
-            {[
-              { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-              { href: '/transactions', label: 'Transactions', icon: '💳' },
-              { href: '/categories', label: 'Categories', icon: '🏷️' },
-            ].map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -40,11 +42,11 @@ export default function Navigation() {
             className="hidden md:flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-foreground-5 transition-colors mt-auto"
           >
             <span>{theme === 'light' ? '🌙' : '☀️'}</span>
-            <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+            <span>{theme === 'light' ? t('navigation.darkMode') : t('navigation.lightMode')}</span>
           </button>
 
           <div className="hidden md:block">
-            <label className="block text-sm mb-2">Currency</label>
+            <label className="block text-sm mb-2">{t('navigation.currency')}</label>
             <select
               value={currency.code}
               onChange={(e) => {
@@ -62,7 +64,7 @@ export default function Navigation() {
           </div>
 
           <div className="hidden md:block">
-            <label className="block text-sm mb-2">Language</label>
+            <label className="block text-sm mb-2">{t('navigation.language')}</label>
             <select
               value={language.code}
               onChange={(e) => {
