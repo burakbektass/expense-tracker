@@ -44,7 +44,9 @@ export const en = {
       pieChart: {
         title: 'Expense Distribution',
         noData: 'No data available',
-        legend: 'Categories'
+        legend: 'Categories',
+        noExpenses: 'No expenses to display',
+        noIncome: 'No income to display',
       },
       barChart: {
         title: 'Monthly Trends',
@@ -58,7 +60,9 @@ export const en = {
         showChart: 'Show Chart',
         showTable: 'Show Table'
       }
-    }
+    },
+    incomeDistribution: 'Income Distribution',
+    distribution: 'Distribution',
   },
   transactions: {
     title: 'Transactions',

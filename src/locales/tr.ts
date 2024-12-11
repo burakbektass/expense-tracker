@@ -44,7 +44,9 @@ export const tr = {
       pieChart: {
         title: 'Harcama Dağılımı',
         noData: 'Veri bulunamadı',
-        legend: 'Kategoriler'
+        legend: 'Kategoriler',
+        noExpenses: 'Gösterilecek gider yok',
+        noIncome: 'Gösterilecek gelir yok',
       },
       barChart: {
         title: 'Aylık Trendler',
@@ -58,7 +60,9 @@ export const tr = {
         showChart: 'Grafik Göster',
         showTable: 'Tablo Göster'
       }
-    }
+    },
+    incomeDistribution: 'Gelir Dağılımı',
+    distribution: 'Dağılımı',
   },
   transactions: {
     title: 'İşlemler',

@@ -102,6 +102,32 @@ export default function Dashboard() {
     return `${currency.symbol}${formatMoney(Math.abs(value))}`;
   };
 
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent
+  }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
@@ -126,7 +152,38 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl border border-border bg-background/50">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{t('dashboard.expenseDistribution')}</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-semibold flex items-center gap-3">
+                <button
+                  onClick={() => setChartType('expense')}
+                  className="relative"
+                  style={{
+                    color: chartType === 'expense' ? '#ef4444' : 'white'
+                  }}
+                >
+                  {t('dashboard.expenses')}
+                  {chartType === 'expense' && (
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />
+                  )}
+                </button>
+                <span className="text-muted-foreground">/</span>
+                <button
+                  onClick={() => setChartType('income')}
+                  className="relative"
+                  style={{
+                    color: chartType === 'income' ? '#22c55d' : 'white'
+                  }}
+                >
+                  {t('dashboard.income')}
+                  {chartType === 'income' && (
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500" />
+                  )}
+                </button>
+                <span className="text-muted-foreground font-normal">
+                  {t('dashboard.distribution')}
+                </span>
+              </h2>
+            </div>
             <button
               onClick={() => setShowPieAsTable(!showPieAsTable)}
               className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
@@ -135,73 +192,40 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="h-[400px]">
-            {pieChartData.length === 0 ? (
+            {((chartType === 'expense' ? expensePieData : incomePieData).length === 0) ? (
               <div className="h-full flex flex-col items-center justify-center text-center gap-4">
-                <span className="text-4xl">📊</span>
+                <span className="text-4xl">
+                  {chartType === 'expense' ? '📊' : '💰'}
+                </span>
                 <div>
-                  <p className="text-lg font-medium mb-1">{t('dashboard.charts.pieChart.noData')}</p>
-                  <p className="text-sm text-muted-foreground">{t('dashboard.noTransactions')}</p>
+                  <p className="text-lg font-medium mb-1">
+                    {chartType === 'expense' 
+                      ? t('dashboard.charts.pieChart.noExpenses')
+                      : t('dashboard.charts.pieChart.noIncome')}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('dashboard.noTransactions')}
+                  </p>
                 </div>
               </div>
             ) : showPieAsTable ? (
               <ExpenseTable 
-                data={pieChartData} 
+                data={chartType === 'expense' ? expensePieData : incomePieData} 
                 currency={currency} 
-                formatMoney={formatMoney} 
+                formatMoney={formatMoney}
               />
             ) : (
-              <ResponsiveContainer width="100%" height="100%" key={`pie-${theme}`}>
-                <PieChart key={`pie-chart-${theme}`}>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
                   <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
+                    data={chartType === 'expense' ? expensePieData : incomePieData}
                     labelLine={false}
-                    label={({
-                      cx,
-                      cy,
-                      midAngle,
-                      innerRadius,
-                      outerRadius,
-                      percent,
-                    }) => {
-                      const RADIAN = Math.PI / 180;
-                      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                      const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                      const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-                      const percentage = (percent * 100);
-                      if (isNaN(percentage)) return null;
-
-                      const label = pieChartData.length === 1 
-                        ? '100%'
-                        : percentage > 99 
-                          ? '>99%' 
-                          : percentage < 0.1 
-                            ? '<0.1%' 
-                            : `${percentage.toFixed(0)}%`;
-
-                      return (
-                        <text
-                          x={x}
-                          y={y}
-                          fill="#ffffff"
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fontSize="smaller"
-                          style={{ 
-                            textShadow: '0px 0px 3px rgba(0,0,0,0.5)'
-                          }}
-                        >
-                          {label}
-                        </text>
-                      );
-                    }}
+                    label={renderCustomizedLabel}
                     outerRadius="80%"
                     minAngle={17}
                     dataKey="value"
                   >
-                    {pieChartData.map((entry, index) => (
+                    {(chartType === 'expense' ? expensePieData : incomePieData).map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
                         fill={pieColors[index]}
@@ -213,24 +237,14 @@ export default function Dashboard() {
                     layout="vertical"
                     align="right"
                     verticalAlign="middle"
-                    formatter={(value, entry: any) => (
-                      <span style={{ color: entry.color }}>
-                        {value}
-                      </span>
-                    )}
                   />
                   <Tooltip 
+                    formatter={(value: number) => `${currency.symbol}${formatMoney(value)}`}
                     contentStyle={{
                       backgroundColor: '#ffffff',
-                      borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
-                      borderRadius: '0.5rem',
-                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-                      padding: '8px 12px'
+                      borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                      color: '#000000'
                     }}
-                    formatter={(value: number, name: string) => [
-                      `${currency.symbol}${formatMoney(value)}`,
-                      name
-                    ]}
                   />
                 </PieChart>
               </ResponsiveContainer>
