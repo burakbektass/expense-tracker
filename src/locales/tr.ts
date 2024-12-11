@@ -172,6 +172,11 @@ export const tr = {
     },
     deleteAllTitle: 'Tüm Kategorileri Sil',
     deleteAllConfirm: 'Tüm kategorileri ve ilişkili işlemleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    budgetWarnings: {
+      warning: 'Bütçe Uyarısı',
+      exceeded: 'Bütçe {amount} kadar aşıldı',
+      approaching: 'Bütçe limitine yaklaşılıyor ({percent}% kullanıldı)',
+    },
   },
   defaultCategories: {
     groceries: 'Market',

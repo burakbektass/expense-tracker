@@ -15,7 +15,7 @@ type Category = {
 type CategoryWithTotals = Category & {
   totalIncome: number;
   totalExpense: number;
-  budgetWarning?: boolean;
+  budgetWarning?: string | null;
 };
 
 const MAX_CATEGORIES = 20;
@@ -37,7 +37,7 @@ export function CategoryProvider({ children }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useLanguage();
-  const { currency, convertAmount } = useCurrency();
+  const { currency, convertAmount, formatAmount } = useCurrency();
 
   useEffect(() => {
     const defaultCategories = [
@@ -112,11 +112,22 @@ export function CategoryProvider({ children }) {
           return sum + amount;
         }, 0);
 
+      let budgetWarning: string | null = null;
+      if (category.budget) {
+        const usagePercent = Math.round((totalExpense / category.budget) * 100);
+        if (totalExpense > category.budget) {
+          const exceededAmount = formatAmount(totalExpense - category.budget);
+          budgetWarning = t('categories.budgetWarnings.exceeded').replace('{amount}', exceededAmount);
+        } else if (totalExpense >= category.budget * 0.8) {
+          budgetWarning = t('categories.budgetWarnings.approaching').replace('{percent}', usagePercent.toString());
+        }
+      }
+
       return {
         ...category,
         totalIncome,
         totalExpense,
-        budgetWarning: category.budget ? totalExpense >= category.budget * 0.8 : false
+        budgetWarning
       };
     });
   };

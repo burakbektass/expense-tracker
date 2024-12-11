@@ -172,6 +172,11 @@ export const en = {
     },
     deleteAllTitle: 'Delete All Categories',
     deleteAllConfirm: 'Are you sure you want to delete all categories and their associated transactions? This action cannot be undone.',
+    budgetWarnings: {
+      warning: 'Budget Warning',
+      exceeded: 'Budget exceeded by {amount}',
+      approaching: 'Approaching budget limit ({percent}% used)',
+    },
   },
   defaultCategories: {
     groceries: 'Groceries',

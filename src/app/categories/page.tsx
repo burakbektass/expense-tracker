@@ -240,11 +240,7 @@ export default function Categories() {
                     <div className="relative group">
                       <span className="text-yellow-500 animate-pulse cursor-pointer">⚠️</span>
                       <div className="absolute hidden group-hover:block left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-10">
-                        {`Warning: Expenses have reached ${(
-                          (Math.abs(convertAmount(category.totalExpense) - convertAmount(category.totalIncome)) /
-                          convertAmount(category.budget || 1)) *
-                          100
-                        ).toFixed(0)}% of budget`}
+                        {category.budgetWarning}
                         <div className="absolute left-1/2 -translate-x-1/2 top-full -mt-1 border-4 border-transparent border-t-black"></div>
                       </div>
                     </div>
