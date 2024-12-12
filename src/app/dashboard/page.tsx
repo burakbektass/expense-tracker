@@ -108,22 +108,42 @@ export default function Dashboard() {
     midAngle,
     innerRadius,
     outerRadius,
-    percent
+    percent,
+    value,
+    payload,
+    name
   }: any) => {
     const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    // Use the percent value directly from the props
+    const actualPercent = percent * 100;
+    
+    let percentText;
+    if (actualPercent < 0.1) {
+      percentText = '< 0.1%';
+    } else if (actualPercent > 99.9) {
+      percentText = '> 99.9%';
+    } else {
+      percentText = `${actualPercent.toFixed(1)}%`;
+    }
 
     return (
       <text
         x={x}
         y={y}
         fill="white"
-        textAnchor={x > cx ? 'start' : 'end'}
+        textAnchor="middle"
         dominantBaseline="central"
+        fontSize={12}
+        fontWeight="bold"
+        style={{
+          filter: 'drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.5))'
+        }}
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {percentText}
       </text>
     );
   };

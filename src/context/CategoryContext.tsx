@@ -44,16 +44,16 @@ export function CategoryProvider({ children }) {
     
     // Only add default categories if there are no saved categories
     const defaultCategories = [
-      { id: '1', name: t('defaultCategories.groceries'), icon: '🛒', budget: null },
-      { id: '2', name: t('defaultCategories.rent'), icon: '🏠', budget: null },
+      { id: '1', name: t('defaultCategories.groceries'), icon: '🛒', budget: 500 },
+      { id: '2', name: t('defaultCategories.rent'), icon: '🏠', budget: 700 },
       { id: '3', name: t('defaultCategories.utilities'), icon: '💡', budget: null },
-      { id: '4', name: t('defaultCategories.transportation'), icon: '🚗', budget: null },
-      { id: '5', name: t('defaultCategories.entertainment'), icon: '🎮', budget: null },
+      { id: '4', name: t('defaultCategories.transportation'), icon: '🚗', budget: 400 },
+      { id: '5', name: t('defaultCategories.entertainment'), icon: '🎮', budget: 150 },
       { id: '6', name: t('defaultCategories.healthcare'), icon: '🏥', budget: null },
       { id: '7', name: t('defaultCategories.education'), icon: '📚', budget: null },
-      { id: '8', name: t('defaultCategories.shopping'), icon: '🛍️', budget: null },
+      { id: '8', name: t('defaultCategories.shopping'), icon: '🛍️', budget: 1000 },
       { id: '9', name: t('defaultCategories.salary'), icon: '💰', budget: null },
-      { id: '10', name: t('defaultCategories.investment'), icon: '📈', budget: null },
+      { id: '10', name: t('defaultCategories.investment'), icon: '📈', budget: 800 },
     ];
     
     localStorage.setItem('categories', JSON.stringify(defaultCategories));

@@ -21,7 +21,17 @@ export function ExpenseTable({ data, currency, formatMoney }) {
                 {currency.symbol}{formatMoney(item.value)}
               </td>
               <td className="text-right p-2">
-                {((item.value / data.reduce((sum, d) => sum + d.value, 0)) * 100).toFixed(1)}%
+                {(() => {
+                  const total = data.reduce((sum, d) => sum + d.value, 0);
+                  const percentage = (item.value / total) * 100;
+                  
+                  if (percentage < 0.1) {
+                    return '< 0.1%';
+                  } else if (percentage > 99.9) {
+                    return '> 99.9%';
+                  }
+                  return `${percentage.toFixed(1)}%`;
+                })()}
               </td>
             </tr>
           ))}

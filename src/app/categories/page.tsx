@@ -361,7 +361,7 @@ export default function Categories() {
                   onChange={(e) =>
                     setNewCategory({ ...newCategory, icon: e.target.value })
                   }
-                  className="input-field"
+                  className="select-field"
                 >
                   <option value="📦">{t('categories.icons.box')}</option>
                   <option value="🛍️">{t('categories.icons.shopping')}</option>
