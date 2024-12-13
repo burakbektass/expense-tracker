@@ -15,7 +15,7 @@ type Category = {
 type CategoryWithTotals = Category & {
   totalIncome: number;
   totalExpense: number;
-  budgetWarning?: string | null;
+  budgetWarning: string | null;
 };
 
 const MAX_CATEGORIES = 20;
@@ -82,36 +82,43 @@ export function CategoryProvider({ children }) {
   };
 
   const getCategoryTotals = (transactions: Transaction[]) => {
+    const { t } = useLanguage();
+    const { formatAmount } = useCurrency();
+
     return categories.map(category => {
       const categoryTransactions = transactions.filter(t => t.categoryId === category.id);
       
       const totalIncome = categoryTransactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => {
-          // Direct conversion from source currency to target currency
-          const convertedAmount = convertAmount(
-            Math.abs(t.amount),
-            t.currency,
-          );
+          const convertedAmount = convertAmount(Math.abs(t.amount), t.currency);
           return sum + convertedAmount;
         }, 0);
       
       const totalExpense = categoryTransactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => {
-          // Direct conversion from source currency to target currency
-          const convertedAmount = convertAmount(
-            Math.abs(t.amount),
-            t.currency
-          );
+          const convertedAmount = convertAmount(Math.abs(t.amount), t.currency);
           return sum + convertedAmount;
         }, 0);
+
+      let budgetWarning = null;
+      if (category.budget) {
+        const usagePercent = Math.round((totalExpense / category.budget) * 100);
+        
+        if (totalExpense > category.budget) {
+          const exceededAmount = formatAmount(totalExpense - category.budget);
+          budgetWarning = t('categories.budgetWarnings.exceeded').replace('{amount}', exceededAmount) as unknown as null;
+        } else if (usagePercent >= 80) {
+          budgetWarning = t('categories.budgetWarnings.approaching').replace('{percent}', usagePercent.toString()) as unknown as null;
+        }
+      }
 
       return {
         ...category,
         totalIncome,
         totalExpense,
-        budgetWarning: null
+        budgetWarning
       };
     });
   };

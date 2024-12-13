@@ -8,6 +8,23 @@ import { formatMoney } from "@/lib/formatUtils";
 import { CategoryTable } from "@/app/categories/components/CategoryTable";
 import { useLanguage } from "@/context/LanguageContext";
 
+const getBudgetWarning = (expense: number, budget: number) => {
+  const { t } = useLanguage();
+  const { currency } = useCurrency();
+  const percentage = (expense / budget) * 100;
+  console.log(expense, budget)
+  if (percentage >= 100) {
+    return t('categories.budgetWarnings.exceeded').replace('{amount}', 
+      `${currency.symbol}${formatMoney(expense - budget)}`
+    );
+  }
+  if (percentage >= 80) {
+    return t('categories.budgetWarnings.approaching').replace('{percent}', 
+      Math.round(percentage).toString()
+    );
+  }
+  return null;
+};
 
 export default function Categories() {
   const {
@@ -49,7 +66,18 @@ export default function Categories() {
   });
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
-  const categoryTotals = getCategoryTotals(transactions);
+  const categoryTotals = getCategoryTotals(transactions).map(category => ({
+    ...category,
+    totalExpense: category.totalExpense,
+    totalIncome: category.totalIncome,
+    budget: category.budget ? category.budget : null,
+    budgetWarning: category.budget 
+      ? getBudgetWarning(
+          category.totalExpense,
+          convertAmount(category.budget)
+        )
+      : null
+  }));
 
   const filteredCategories = categoryTotals.filter(category =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -206,7 +234,7 @@ export default function Categories() {
       {viewMode === "table" ? (
         <div className="rounded-2xl border border-border overflow-hidden">
           <CategoryTable
-            categories={categories}
+            categories={categoryTotals}
             transactions={transactions}
             currency={currency}
             convertAmount={convertAmount}
