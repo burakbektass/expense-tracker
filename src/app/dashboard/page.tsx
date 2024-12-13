@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { ExpenseTable } from './components/ExpenseTable';
 import { TrendTable } from './components/TrendTable';
 import { useLanguage } from '@/context/LanguageContext';
+
 // Add this interface near the top of the file
 interface MonthlyData {
   income: number;
@@ -41,14 +42,14 @@ export default function Dashboard() {
     .filter(cat => cat.totalExpense > 0)
     .map(cat => ({
       name: cat.name,
-      value: convertAmount(cat.totalExpense)
+      value: cat.totalExpense
     }));
 
   const incomePieData = categoryTotals
     .filter(cat => cat.totalIncome > 0)
     .map(cat => ({
       name: cat.name,
-      value: convertAmount(cat.totalIncome)
+      value: cat.totalIncome
     }));
 
   // Prepare data for pie chart (expense distribution)
@@ -56,7 +57,7 @@ export default function Dashboard() {
     .filter(cat => cat.totalExpense > 0)
     .map(cat => ({
       name: cat.name,
-      value: convertAmount(cat.totalExpense)
+      value: cat.totalExpense
     }));
 
   // Generate colors dynamically based on the number of categories with expenses
@@ -150,22 +151,24 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
+      <div className="flex items-center gap-4">
+        <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">{t('dashboard.totalBalance')}</h3>
-          <p className="text-3xl font-bold">{currency.symbol}{formatMoney(convertAmount(balance))}</p>
+          <p className="text-3xl font-bold">{currency.symbol}{formatMoney(balance)}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">{t('dashboard.totalIncome')}</h3>
-          <p className="text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(convertAmount(totalIncome))}</p>
+          <p className="text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(totalIncome)}</p>
         </div>
         
         <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border">
           <h3 className="text-lg font-medium mb-2">{t('dashboard.totalExpenses')}</h3>
-          <p className="text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(convertAmount(totalExpense))}</p>
+          <p className="text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(totalExpense)}</p>
         </div>
       </div>
 

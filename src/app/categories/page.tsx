@@ -8,6 +8,7 @@ import { formatMoney } from "@/lib/formatUtils";
 import { CategoryTable } from "@/app/categories/components/CategoryTable";
 import { useLanguage } from "@/context/LanguageContext";
 
+
 export default function Categories() {
   const {
     categories,
@@ -115,7 +116,7 @@ export default function Categories() {
     }
 
     const budget = editingCategory.budget
-      ? convertAmount(Number(editingCategory.budget), currency.code, "USD")
+      ? convertAmount(Number(editingCategory.budget), currency.code)
       : null;
 
     updateCategory(editingCategory.id, {
@@ -144,8 +145,10 @@ export default function Categories() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold">{t('categories.title')}</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <h1 className="text-4xl font-bold">{t('categories.title')}</h1>
+        </div>
         <div className="flex items-center gap-4">
           <div className="relative">
             <input
@@ -267,18 +270,16 @@ export default function Categories() {
                 </p>
                 <p className="text-sm text-green-500">
                   {t('categories.incomePrefix')}: {currency.symbol}
-                  {formatMoney(convertAmount(category.totalIncome))}
+                  {formatMoney(category.totalIncome)}
                 </p>
                 <p className="text-sm text-red-500">
                   {t('categories.expensesPrefix')}: {currency.symbol}
-                  {formatMoney(convertAmount(category.totalExpense))}
+                  {formatMoney(category.totalExpense)}
                 </p>
                 <p className="text-sm font-medium">
                   {t('categories.balancePrefix')}: {currency.symbol}
                   {formatMoney(
-                    convertAmount(
-                      category.totalIncome - category.totalExpense
-                    )
+                      category.totalIncome - category.totalExpense                 
                   )}
                 </p>
               </div>

@@ -1,26 +1,48 @@
 # BudgetFlow - Personal Finance Tracker
 
-A modern expense tracking application built with Next.js 14, React, TypeScript, and TailwindCSS. Helps users manage personal finances with features like budgeting, multi-currency support, and data visualization.
+A modern personal finance management application built with Next.js 14, focusing on intuitive budget tracking and financial analytics.
 
 ## Core Features
 
-- 💰 Income & expense tracking with categories
-- 📊 Interactive charts and data visualization
-- 🌍 Multi-language support (English/Turkish)
-- 💱 Multi-currency support with real-time conversion
-- 🌓 Dark/Light theme
-- 📱 Responsive design
-- 💾 Local storage persistence
-- ⚠️ Budget warning system
-- 📈 Monthly trend analysis
+- 💰 Comprehensive transaction management
+  - Income & expense tracking
+  - Multi-currency support with real-time conversion
+  - Detailed transaction history
+  - Transaction search and filtering
+
+- 📊 Advanced Data Visualization
+  - Interactive pie charts for expense/income distribution
+  - Monthly trend analysis with bar charts
+  - Toggleable chart/table views
+  - Percentage-based distribution analysis
+
+- 🎯 Budget Management
+  - Category-based budgeting
+  - Budget warning system
+  - Visual budget progress indicators
+  - Automated budget notifications
+
+- 🌍 Internationalization
+  - Multi-language support (English/Turkish)
+  - Localized number formatting
+  - Currency conversion
+  - Regional date formatting
+
+- 🎨 User Experience
+  - Dark/Light theme
+  - Responsive design
+  - Intuitive navigation
+  - Real-time updates
 
 ## Tech Stack
 
-- Next.js 14
-- TypeScript
-- TailwindCSS
-- Recharts
-- React Context
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **Charts**: Recharts
+- **State Management**: React Context
+- **Storage**: Local Storage
+- **Icons**: Emoji-based system
 
 ## Getting Started
 
@@ -45,26 +67,51 @@ npm run dev
 
 ```
 src/
-├── app/             # Pages and routing
-├── components/      # Reusable components
-├── context/        # State management
-├── lib/            # Utilities
-└── locales/        # Language files
+├── app/                # Pages and routing
+│   ├── dashboard/      # Dashboard views
+│   ├── transactions/   # Transaction management
+│   └── categories/     # Category management
+├── components/         # Reusable components
+├── context/           # State management
+│   ├── CategoryContext
+│   ├── TransactionContext
+│   ├── CurrencyContext
+│   └── LanguageContext
+├── lib/               # Utilities
+└── locales/           # Language files
 ```
 
-## Key Features
+## Key Features in Detail
 
-### Finance Management
-- Transaction tracking with categories
-- Budget setting and monitoring
-- Expense distribution analysis
-- Monthly trend visualization
+### Financial Management
+- Transaction tracking with detailed categorization
+- Multiple currency support with automatic conversion
+- Budget setting and monitoring per category
+- Comprehensive financial overview dashboard
 
-### Customization
-- Language switching (EN/TR)
-- Currency selection
-- Dark/Light theme
-- Category management
+### Data Analysis
+- Visual representation of expenses and income
+- Monthly trend analysis
+- Category-wise distribution
+- Budget vs. actual spending comparison
+
+### Category System
+- Custom category creation
+- Category-specific budgets
+- Icon selection for categories
+- Transaction count tracking per category
+
+### Customization Options
+- Language selection (EN/TR)
+- Currency preference
+- Theme switching (Dark/Light)
+- Display preferences (Chart/Table views)
+
+### Budget Monitoring
+- Category-specific budget limits
+- Visual warning system
+- Progress tracking
+- Overspending notifications
 
 ## Contributing
 

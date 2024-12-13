@@ -88,19 +88,23 @@ export function CategoryProvider({ children }) {
       const totalIncome = categoryTransactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => {
-          const convertedAmount = t.currency === currency.code 
-            ? t.amount 
-            : convertAmount(t.amount, t.currency);
-          return sum + Math.abs(convertedAmount);
+          // Direct conversion from source currency to target currency
+          const convertedAmount = convertAmount(
+            Math.abs(t.amount),
+            t.currency,
+          );
+          return sum + convertedAmount;
         }, 0);
       
       const totalExpense = categoryTransactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => {
-          const convertedAmount = t.currency === currency.code 
-            ? t.amount 
-            : convertAmount(t.amount, t.currency);
-          return sum + Math.abs(convertedAmount);
+          // Direct conversion from source currency to target currency
+          const convertedAmount = convertAmount(
+            Math.abs(t.amount),
+            t.currency
+          );
+          return sum + convertedAmount;
         }, 0);
 
       return {

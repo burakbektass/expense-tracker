@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { CurrencySelect } from '@/components/CurrencySelect';
 
 export default function Navigation() {
     const { theme, toggleTheme } = useTheme();
@@ -42,6 +43,11 @@ export default function Navigation() {
             <span>{theme === 'light' ? '🌙' : '☀️'}</span>
             <span>{theme === 'light' ? t('navigation.darkMode') : t('navigation.lightMode')}</span>
           </button>
+
+          <div className="hidden md:block">
+            <label className="block text-sm mb-2">{t('navigation.currency')}</label>
+            <CurrencySelect />
+          </div>
 
           <div className="hidden md:block">
             <label className="block text-sm mb-2">{t('navigation.language')}</label>
