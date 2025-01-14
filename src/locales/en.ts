@@ -22,6 +22,7 @@ export const en = {
     lightMode: 'Light Mode',
     currency: 'Currency',
     language: 'Language',
+    settings: 'Settings',
   },
   dashboard: {
     title: 'Dashboard',

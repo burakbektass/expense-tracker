@@ -150,196 +150,203 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <h1 className="text-4xl font-bold">{t('dashboard.title')}</h1>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalBalance')}</h3>
-          <p className="text-3xl font-bold">{currency.symbol}{formatMoney(balance)}</p>
-        </div>
-        
-        <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalIncome')}</h3>
-          <p className="text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(totalIncome)}</p>
-        </div>
-        
-        <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border">
-          <h3 className="text-lg font-medium mb-2">{t('dashboard.totalExpenses')}</h3>
-          <p className="text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(totalExpense)}</p>
+    <div className="min-h-screen pb-20 md:pb-0">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-background-10 backdrop-blur-xl border-b border-border z-10 md:hidden">
+        <div className="flex items-center justify-between h-full px-4">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+            {t('common.appName')}
+          </h1>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl border border-border bg-background/50">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-xl font-semibold flex items-center gap-3">
-                <button
-                  onClick={() => setChartType('expense')}
-                  className="relative"
-                  style={{
-                    color: chartType === 'expense' ? '#ef4444' : 'white'
-                  }}
-                >
-                  {t('dashboard.expenses')}
-                  {chartType === 'expense' && (
-                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />
-                  )}
-                </button>
-                <span className="text-muted-foreground">/</span>
-                <button
-                  onClick={() => setChartType('income')}
-                  className="relative"
-                  style={{
-                    color: chartType === 'income' ? '#22c55d' : 'white'
-                  }}
-                >
-                  {t('dashboard.income')}
-                  {chartType === 'income' && (
-                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500" />
-                  )}
-                </button>
-                <span className="text-muted-foreground font-normal">
-                  {t('dashboard.distribution')}
-                </span>
-              </h2>
-            </div>
-            <button
-              onClick={() => setShowPieAsTable(!showPieAsTable)}
-              className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
-            >
-              {showPieAsTable ? '📊 '+t('dashboard.showChart') : '📋 '+t('dashboard.showTable')}
-            </button>
-          </div>
-          <div className="h-[400px]">
-            {((chartType === 'expense' ? expensePieData : incomePieData).length === 0) ? (
-              <div className="h-full flex flex-col items-center justify-center text-center gap-4">
-                <span className="text-4xl">
-                  {chartType === 'expense' ? '📊' : '💰'}
-                </span>
-                <div>
-                  <p className="text-lg font-medium mb-1">
-                    {chartType === 'expense' 
-                      ? t('dashboard.charts.pieChart.noExpenses')
-                      : t('dashboard.charts.pieChart.noIncome')}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {t('dashboard.noTransactions')}
-                  </p>
-                </div>
-              </div>
-            ) : showPieAsTable ? (
-              <ExpenseTable 
-                data={chartType === 'expense' ? expensePieData : incomePieData} 
-                currency={currency} 
-                formatMoney={formatMoney}
-              />
-            ) : (
-              <ResponsiveContainer width="100%" height={400}>
-                <PieChart>
-                  <Pie
-                    data={chartType === 'expense' ? expensePieData : incomePieData}
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius="80%"
-                    minAngle={17}
-                    dataKey="value"
-                  >
-                    {(chartType === 'expense' ? expensePieData : incomePieData).map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={pieColors[index]}
-                        style={{ outline: 'none' }}
-                      />
-                    ))}
-                  </Pie>
-                  <Legend
-                    layout="vertical"
-                    align="right"
-                    verticalAlign="middle"
-                  />
-                  <Tooltip 
-                    formatter={(value: number) => `${currency.symbol}${formatMoney(value)}`}
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-                      color: '#000000'
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 mt-16 md:mt-0">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl sm:text-4xl font-bold">{t('dashboard.title')}</h1>
         </div>
         
-        <div className="p-6 rounded-2xl border border-border bg-background/50">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{t('dashboard.monthlyTrends')}</h2>
-            <button
-              onClick={() => setShowBarAsTable(!showBarAsTable)}
-              className="px-3 py-2 hover:bg-foreground/5 rounded-lg flex items-center gap-2"
-            >
-              {showBarAsTable ? '📊 '+t('dashboard.showChart') : '📋 '+t('dashboard.showTable')}
-            </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+          <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-border">
+            <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">{t('dashboard.totalBalance')}</h3>
+            <p className="text-xl sm:text-3xl font-bold">{currency.symbol}{formatMoney(balance)}</p>
           </div>
-          <div className="h-[400px]">
-            {Object.keys(monthlyData).length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center gap-4">
-                <span className="text-4xl">📈</span>
-                <div>
-                  <p className="text-lg font-medium mb-1">{t('dashboard.charts.barChart.noData')}</p>
-                  <p className="text-sm text-muted-foreground">{t('dashboard.noTransactions')}</p>
-                </div>
-              </div>
-            ) : showBarAsTable ? (
-              <TrendTable 
-                data={trendTableData} 
-                currency={currency} 
-                formatMoney={formatMoney} 
-              />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%" key={`bar-${theme}`}>
-                <BarChart 
-                  data={barChartData} 
-                  margin={{ top: 20, right: 30, left: 50, bottom: 5 }} 
-                  key={`bar-chart-${theme}`}
+          
+          <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-border">
+            <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">{t('dashboard.totalIncome')}</h3>
+            <p className="text-xl sm:text-3xl font-bold text-green-500">{currency.symbol}{formatMoney(totalIncome)}</p>
+          </div>
+          
+          <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-border sm:col-span-2 xl:col-span-1">
+            <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">{t('dashboard.totalExpenses')}</h3>
+            <p className="text-xl sm:text-3xl font-bold text-red-500">{currency.symbol}{formatMoney(totalExpense)}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+          <div className="p-6 rounded-2xl border border-border bg-background-10">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+              <div className="flex gap-4 mb-4 sm:mb-0">
+                <button
+                  onClick={() => setChartType('expense')}
+                  className={`${chartType === 'expense' ? 'text-red-500 underline' : ''}`}
                 >
-                  <XAxis dataKey="month" />
-                  <YAxis 
-                    tickFormatter={(value) => {
-                      if (value >= 1000000000) {
-                        return `${currency.symbol}${(value / 1000000000).toFixed(1)}B`;
-                      } else if (value >= 1000000) {
-                        return `${currency.symbol}${(value / 1000000).toFixed(1)}M`;
-                      } else if (value >= 1000) {
-                        return `${currency.symbol}${(value / 1000).toFixed(1)}K`;
-                      }
-                      return `${currency.symbol}${formatMoney(Math.abs(value))}`;
-                    }}
-                    width={70}
-                  />
-                  <Tooltip 
-                    formatter={barTooltipFormatter}
-                    labelStyle={{ color: 'var(--foreground)' }}
-                  />
-                  <Bar 
-                    dataKey="Income" 
-                    fill={barColors.income} 
-                    minPointSize={20}
-                    name={t('dashboard.income')}
-                  />
-                  <Bar 
-                    dataKey="Expenses" 
-                    fill={barColors.expense} 
-                    minPointSize={20}
-                    name={t('dashboard.expenses')}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+                  {t('dashboard.expenses')}
+                </button>
+                <span>/</span>
+                <button
+                  onClick={() => setChartType('income')}
+                  className={`${chartType === 'income' ? 'text-green-500 underline' : ''}`}
+                >
+                  {t('dashboard.income')}
+                </button>
+                <span>{t('dashboard.distribution')}</span>
+              </div>
+              <button
+                onClick={() => setShowPieAsTable(!showPieAsTable)}
+                className="text-sm"
+              >
+                {showPieAsTable ? t('dashboard.charts.toggleView.showChart') : t('dashboard.charts.toggleView.showTable')}
+              </button>
+            </div>
+            
+            <div className="h-[300px] sm:h-[400px]">
+              {((chartType === 'expense' ? expensePieData : incomePieData).length === 0) ? (
+                <div className="h-full flex flex-col items-center justify-center text-center gap-4">
+                  <span className="text-4xl">
+                    {chartType === 'expense' ? '📊' : '💰'}
+                  </span>
+                  <div>
+                    <p className="text-lg font-medium mb-1">
+                      {chartType === 'expense' 
+                        ? t('dashboard.charts.pieChart.noExpenses')
+                        : t('dashboard.charts.pieChart.noIncome')}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('dashboard.noTransactions')}
+                    </p>
+                  </div>
+                </div>
+              ) : showPieAsTable ? (
+                <ExpenseTable 
+                  data={chartType === 'expense' ? expensePieData : incomePieData} 
+                  currency={currency} 
+                  formatMoney={formatMoney}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="w-full sm:w-full h-[250px] sm:h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={chartType === 'expense' ? expensePieData : incomePieData}
+                          labelLine={false}
+                          label={renderCustomizedLabel}
+                          outerRadius={window.innerWidth < 640 ? "60%" : "80%"}
+                          minAngle={17}
+                          dataKey="value"
+                        >
+                          {(chartType === 'expense' ? expensePieData : incomePieData).map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={pieColors[index]}
+                              style={{ outline: 'none' }}
+                            />
+                          ))}
+                        </Pie>
+                        <Legend
+                          layout="vertical"
+                          align="right"
+                          verticalAlign="middle"
+                          wrapperStyle={{
+                            fontSize: window.innerWidth < 640 ? '10px' : '12px',
+                            paddingLeft: window.innerWidth < 640 ? '10px' : '20px'
+                          }}
+                        />
+                        <Tooltip 
+                          formatter={(value: number) => `${currency.symbol}${formatMoney(value)}`}
+                          contentStyle={{
+                            backgroundColor: '#ffffff',
+                            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+                            color: '#000000',
+                            fontSize: window.innerWidth < 640 ? '10px' : '12px'
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="p-6 rounded-2xl border border-border bg-background-10">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold mb-4 sm:mb-0">
+                {t('dashboard.monthlyTrends')}
+              </h2>
+              <button
+                onClick={() => setShowBarAsTable(!showBarAsTable)}
+                className="text-sm"
+              >
+                {showBarAsTable ? t('dashboard.charts.toggleView.showChart') : t('dashboard.charts.toggleView.showTable')}
+              </button>
+            </div>
+            
+            <div className="h-[300px] sm:h-[400px]">
+              {Object.keys(monthlyData).length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center gap-4">
+                  <span className="text-4xl">📈</span>
+                  <div>
+                    <p className="text-lg font-medium mb-1">{t('dashboard.charts.barChart.noData')}</p>
+                    <p className="text-sm text-muted-foreground">{t('dashboard.noTransactions')}</p>
+                  </div>
+                </div>
+              ) : showBarAsTable ? (
+                <TrendTable 
+                  data={trendTableData} 
+                  currency={currency} 
+                  formatMoney={formatMoney} 
+                />
+              ) : (
+                <ResponsiveContainer width="100%" height="100%" key={`bar-${theme}`}>
+                  <BarChart 
+                    data={barChartData} 
+                    margin={{ top: 20, right: 30, left: 50, bottom: 5 }} 
+                    key={`bar-chart-${theme}`}
+                  >
+                    <XAxis dataKey="month" />
+                    <YAxis 
+                      tickFormatter={(value) => {
+                        if (value >= 1000000000) {
+                          return `${currency.symbol}${(value / 1000000000).toFixed(1)}B`;
+                        } else if (value >= 1000000) {
+                          return `${currency.symbol}${(value / 1000000).toFixed(1)}M`;
+                        } else if (value >= 1000) {
+                          return `${currency.symbol}${(value / 1000).toFixed(1)}K`;
+                        }
+                        return `${currency.symbol}${formatMoney(Math.abs(value))}`;
+                      }}
+                      width={70}
+                    />
+                    <Tooltip 
+                      formatter={barTooltipFormatter}
+                      labelStyle={{ color: 'var(--foreground)' }}
+                    />
+                    <Bar 
+                      dataKey="Income" 
+                      fill={barColors.income} 
+                      minPointSize={20}
+                      name={t('dashboard.income')}
+                    />
+                    <Bar 
+                      dataKey="Expenses" 
+                      fill={barColors.expense} 
+                      minPointSize={20}
+                      name={t('dashboard.expenses')}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
         </div>
       </div>

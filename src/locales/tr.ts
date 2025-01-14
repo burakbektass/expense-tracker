@@ -22,6 +22,7 @@ export const tr = {
     lightMode: 'Aydınlık Mod',
     currency: 'Para Birimi',
     language: 'Dil',
+    settings: 'Ayarlar',
   },
   dashboard: {
     title: 'Panel',
