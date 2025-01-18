@@ -34,9 +34,10 @@ type CategoryContextType = {
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
 export function CategoryProvider({ children }) {
+  const savedCategories = localStorage.getItem('categories');
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<Category[]>(() => {
-    const savedCategories = localStorage.getItem('categories');
-    const { t } = useLanguage();
+    
 
     if (savedCategories) {
       return JSON.parse(savedCategories);
