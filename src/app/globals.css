@@ -54,7 +54,14 @@ body {
   }
 
   .main-content {
-    @apply md:ml-64 transition-all duration-150;
+    @apply md:ml-64 p-4 sm:p-6 lg:p-8 transition-all duration-150;
+  }
+
+  /* Mobile için padding */
+  @media (max-width: 767px) {
+    .main-content {
+      @apply pt-20; /* Header yüksekliği + extra padding */
+    }
   }
 
   .page-title {
@@ -116,6 +123,10 @@ body {
   @media (max-width: 767px) {
     .nav-content {
       @apply border-b border-border;
+    }
+
+    .main-content {
+      @apply pt-20; /* Header yüksekliği + extra padding */
     }
   }
 
@@ -238,7 +249,7 @@ body {
   z-index: 10000;
 }
 
-/* Modal içindeki select box'lar için stil */
+/* Select box'lar için mobil optimizasyonu */
 .settings-modal .select-field,
 .settings-modal .currency-select {
   width: 100% !important;
