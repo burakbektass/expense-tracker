@@ -96,43 +96,45 @@ export default function Transactions() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center gap-4">
-        <h1 className="text-4xl font-bold">{t('transactions.title')}</h1>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+    <div className="space-y-6 mt-16 md:mt-0 px-4 md:px-0">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <h1 className="text-3xl md:text-4xl font-bold">{t('transactions.title')}</h1>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1 sm:flex-initial">
             <input
               type="text"
               placeholder={t('transactions.searchTransactions')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 pr-10 rounded-lg border border-border bg-background"
+              className="w-full px-4 py-2 pr-10 rounded-lg border border-border bg-background"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
               🔍
             </span>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            {t('transactions.addTransaction')}
-          </button>
-          <button
-            onClick={() => setShowDeleteAllModal(true)}
-            className={`px-4 py-2 bg-red-500 text-white rounded-lg transition-colors
-              ${transactions.length === 0 
-                ? 'opacity-50 cursor-not-allowed hover:bg-red-500 pointer-events-none' 
-                : 'hover:bg-red-600'
-              }`}
-            disabled={transactions.length === 0}
-          >
-            {t('transactions.deleteAll')}
-          </button>
+          <div className="flex gap-2 sm:gap-3">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex-1 sm:flex-initial px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              {t('transactions.addTransaction')}
+            </button>
+            <button
+              onClick={() => setShowDeleteAllModal(true)}
+              className={`flex-1 sm:flex-initial px-4 py-2 bg-red-500 text-white rounded-lg transition-colors
+                ${transactions.length === 0 
+                  ? 'opacity-50 cursor-not-allowed hover:bg-red-500 pointer-events-none' 
+                  : 'hover:bg-red-600'
+                }`}
+              disabled={transactions.length === 0}
+            >
+              {t('transactions.deleteAll')}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border overflow-hidden">
+      <div className="rounded-2xl border border-border overflow-x-auto">
         <TransactionTable
           transactions={filteredTransactions}
           categories={categories}
@@ -145,7 +147,7 @@ export default function Transactions() {
 
       {showAddModal && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[600px] md:mx-auto max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">{t('transactions.addNewTransaction')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -289,7 +291,7 @@ export default function Transactions() {
 
       {showDeleteAllModal && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[400px] md:mx-auto">
             <h2 className="text-2xl font-bold mb-4">{t('transactions.deleteAllTitle')}</h2>
             <p className="mb-4">{t('transactions.deleteAllConfirm')}</p>
             <div className="flex justify-end gap-2">
