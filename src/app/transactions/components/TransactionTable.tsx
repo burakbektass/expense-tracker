@@ -72,8 +72,8 @@ export function TransactionTable({
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
+    <div className="w-full overflow-x-auto">
+      <table className="w-full min-w-[640px]">
         <thead>
           <tr>
             <th className="p-4 text-left">{t('transactions.category')}</th>
