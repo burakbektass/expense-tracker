@@ -172,75 +172,79 @@ export default function Categories() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 mt-16 md:mt-0 px-4 md:px-0">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-4xl font-bold">{t('categories.title')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold">{t('categories.title')}</h1>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1 sm:flex-initial">
             <input
               type="text"
               placeholder={t('categories.searchCategories')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 pr-10 rounded-lg border border-border bg-background"
+              className="w-full px-4 py-2 pr-10 rounded-lg border border-border bg-background"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
               🔍
             </span>
           </div>
-          <button
-            onClick={() => setViewMode(viewMode === "card" ? "table" : "card")}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-foreground/5 transition-colors"
-          >
-            {viewMode === "card" ? (
-              <>
-                <span>📊</span>
-                {t('categories.viewMode.table')}
-              </>
-            ) : (
-              <>
-                <span>📇</span>
-                {t('categories.viewMode.card')}
-              </>
-            )}
-          </button>
-          <div className="flex flex-col items-end gap-2">
-            {hasReachedLimit && (
-              <p className="text-sm text-yellow-500">
-                {t('categories.categoryLimit')}
-              </p>
-            )}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                disabled={hasReachedLimit}
-              >
-                {t('categories.addCategory')}
-              </button>
-              <button
-                onClick={() => setShowDeleteAllModal(true)}
-                className="button-danger"
-              >
-                {t('transactions.deleteAll')}
-              </button>
+          <div className="flex gap-2 sm:gap-3">
+            <button
+              onClick={() => setViewMode(viewMode === "card" ? "table" : "card")}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-foreground/5 transition-colors"
+            >
+              {viewMode === "card" ? (
+                <>
+                  <span>📊</span>
+                  {t('categories.viewMode.table')}
+                </>
+              ) : (
+                <>
+                  <span>📇</span>
+                  {t('categories.viewMode.card')}
+                </>
+              )}
+            </button>
+            <div className="flex flex-col items-end gap-2">
+              {hasReachedLimit && (
+                <p className="text-sm text-yellow-500">
+                  {t('categories.categoryLimit')}
+                </p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex-1 sm:flex-initial px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  disabled={hasReachedLimit}
+                >
+                  {t('categories.addCategory')}
+                </button>
+                <button
+                  onClick={() => setShowDeleteAllModal(true)}
+                  className="flex-1 sm:flex-initial button-danger"
+                >
+                  {t('transactions.deleteAll')}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {viewMode === "table" ? (
-        <div className="rounded-2xl border border-border overflow-hidden">
-          <CategoryTable
-            categories={categoryTotals}
-            transactions={transactions}
-            currency={currency}
-            convertAmount={convertAmount}
-            onDelete={handleDeleteCategory}
-            onEdit={handleEditClick}
-          />
+        <div className="rounded-2xl border border-border overflow-x-auto">
+          <div className="w-full min-w-[640px]">
+            <CategoryTable
+              categories={categoryTotals}
+              transactions={transactions}
+              currency={currency}
+              convertAmount={convertAmount}
+              onDelete={handleDeleteCategory}
+              onEdit={handleEditClick}
+            />
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -318,7 +322,7 @@ export default function Categories() {
 
       {showDeleteModal.show && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[400px] md:mx-auto">
             <h2 className="text-2xl font-bold mb-4">{t('categories.deleteCategory')}</h2>
             <p className="mb-4">
               {showDeleteModal.hasTransactions 
@@ -347,7 +351,7 @@ export default function Categories() {
 
       {showAddModal && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[600px] md:mx-auto max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">{t('categories.addCategory')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -448,7 +452,7 @@ export default function Categories() {
 
       {showEditModal && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[600px] md:mx-auto max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">{t('categories.editCategory')}</h2>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
@@ -552,7 +556,7 @@ export default function Categories() {
 
       {showDeleteAllModal && (
         <div className="modal-container">
-          <div className="modal-content">
+          <div className="modal-content w-full mx-4 md:w-[400px] md:mx-auto">
             <h2 className="text-2xl font-bold mb-4">{t('categories.deleteAllTitle')}</h2>
             <p className="mb-4">{t('categories.deleteAllConfirm')}</p>
             <div className="flex justify-end gap-2">
