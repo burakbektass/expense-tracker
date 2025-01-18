@@ -237,8 +237,8 @@ export default function Categories() {
         <div className="rounded-2xl border border-border overflow-x-auto">
           <div className="w-full min-w-[640px]">
             <CategoryTable
-              categories={categoryTotals}
               transactions={transactions}
+              categories={filteredCategories}
               currency={currency}
               convertAmount={convertAmount}
               onDelete={handleDeleteCategory}
